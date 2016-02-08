@@ -1,4 +1,4 @@
-#include <cstdio>
+#include <iostream>
 #include <vector>
 #include <queue>
 
@@ -6,15 +6,15 @@ using namespace std;
 
 int main() {
 	int num_node, num_nonleaf;
-	scanf("%d %d", &num_node, &num_nonleaf);
+	cin >> num_node >> num_nonleaf;
 
 	vector<int> *nodes = new vector<int>[num_node + 1];
 	for (int i = 0; i < num_nonleaf; i++) {
 		int id, num_child;
-		scanf("%d %d", &id, &num_child);
+		cin >> id >> num_child;
 		for (int j = 0; j < num_child; j++) {
 			int c_id;
-			scanf("%d", &c_id);
+			cin >> c_id;
 			nodes[id].push_back(c_id);
 		}
 	}
@@ -32,9 +32,9 @@ int main() {
 				for (int j = 0; j < nodes[id].size(); j++)
 					level.push(nodes[id][j]);
 		}
-		printf("%d", num_leaf);
+		cout << num_leaf;
 		if (level.size() > 0)
-			printf(" ");
+			cout << " ";
 		else
 			break;
 	}

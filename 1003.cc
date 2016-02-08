@@ -1,5 +1,7 @@
-#include <cstdio>
+#include <iostream>
 #include <climits>
+
+using namespace std;
 
 int num_path = 0;
 
@@ -50,10 +52,10 @@ int find(int N, int **map, int *distances, int *teams, int src, int dst, int num
 
 int main() {
 	int num_city, num_road, src, dst;
-	scanf("%d %d %d %d", &num_city, &num_road, &src, &dst);
+	cin >> num_city >> num_road >> src >> dst;
 	int *teams = new int[num_city];
 	for (int i = 0; i < num_city; i++)
-		scanf("%d", &teams[i]);
+		cin >> teams[i];
 	int **roads = new int *[num_city];
 	for (int i = 0; i < num_city; i++) {
 		roads[i] = new int[num_city];
@@ -63,13 +65,13 @@ int main() {
 	}
 	for (int i = 0; i < num_road; i++) {
 		int a, b, len;
-		scanf("%d %d %d", &a, &b, &len);
+		cin >> a >> b >> len;
 		roads[a][b] = len;
 		roads[b][a] = len;
 	}
 	int *distances = Dijstra(num_city, roads, dst);
 	int num_team = find(num_city, roads, distances, teams, src, dst, 0);
-	printf("%d %d", num_path, num_team);
+	cout << num_path << " " << num_team;
 
 	return 0;
 }

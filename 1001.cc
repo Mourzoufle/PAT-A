@@ -1,4 +1,4 @@
-#include <cstdio>
+#include <iostream>
 #include <string>
 #include <algorithm>
 
@@ -6,7 +6,7 @@ using namespace std;
 
 int main() {
 	int a, b;
-	scanf("%d %d", &a, &b);
+	cin >> a >> b;
 	int sum = a + b;
 	bool is_neg = sum < 0;
 	if (is_neg)
@@ -23,7 +23,6 @@ int main() {
 	else if (is_neg)
 		disp += '-';
 	reverse(disp.begin(), disp.end());
-	printf("%s", disp.c_str());
-
+	cout << disp;
 	return 0;
 }

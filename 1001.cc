@@ -1,14 +1,15 @@
-#include <iostream>
+#include <cstdio>
+#include <string>
 #include <algorithm>
 
 using namespace std;
 
 int main() {
 	int a, b;
-	cin >> a >> b;
+	scanf("%d %d", &a, &b);
 	int sum = a + b;
-	bool isNeg = sum < 0;
-	if (isNeg)
+	bool is_neg = sum < 0;
+	if (is_neg)
 		sum = -sum;
 	string disp;
 	for (int i = 0; sum > 0; i++) {
@@ -19,10 +20,10 @@ int main() {
 	}
 	if (disp.length() == 0)
 		disp = "0";
-	else if (isNeg)
+	else if (is_neg)
 		disp += '-';
 	reverse(disp.begin(), disp.end());
-	cout << disp;
+	printf("%s", disp.c_str());
 
 	return 0;
 }

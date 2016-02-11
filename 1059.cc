@@ -1,9 +1,9 @@
-#include <cstdio>
-#include <cmath>
+#include <iostream>
+
+using namespace std;
 
 bool is_prime(long num) {
-	long length = sqrt(num) + 1;
-	for (long i = 3; i <= length; i += 2)
+	for (long i = 3; i * i <= num; i += 2)
 		if (num % i == 0)
 			return false;
 
@@ -12,11 +12,11 @@ bool is_prime(long num) {
 
 int main() {
 	long num;
-	scanf("%ld", &num);
-	printf("%ld=", num);
+	cin >> num;
+	cout << num << "=";
 	if (num == 1)
-		printf("1");
-	for (long i = 2; i <= num; i++) {
+		cout << "1";
+	for (long i = 2; i <= num; i += 2) {
 		if (!is_prime(i))
 			continue;
 		int count = 0;
@@ -25,11 +25,13 @@ int main() {
 			count++;
 		}
 		if (count > 0)
-			printf("%ld", i);
+			cout << i;
 		if (count > 1)
-			printf("^%d", count);
+			cout << "^" << count;
 		if ((count > 0) && num > 1)
-			printf("*");
+			cout << "*";
+		if (i == 2)
+			i--;
 	}
 
 	return 0;

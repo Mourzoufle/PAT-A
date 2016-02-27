@@ -4,12 +4,14 @@
 using namespace std;
 
 string get_double(string num) {
+	for (int i = 0; i < num.size(); i++)
+		num[i] -= '0';
 	string res;
-	if (num[0] > '4')
+	if (num[0] > 4)
 		res += '1';
 	for (int i = 0; i < num.size() - 1; i++)
-		res += ((((num[i] - '0') << 1) + (num[i + 1] > '4' ? 1 : 0)) % 10) + '0';
-	res += (((num[num.size() - 1] - '0') << 1) % 10) + '0';
+		res += (((num[i] << 1) + ((num[i + 1] > 4) ? 1 : 0)) % 10) + '0';
+	res += ((num[num.size() - 1] << 1) % 10) + '0';
 
 	return res;
 }

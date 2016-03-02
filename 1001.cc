@@ -20,9 +20,11 @@ int main() {
 	}
 	if (disp.empty())
 		disp = "0";
-	else if (is_neg)
-		disp += '-';
-	reverse(disp.begin(), disp.end());
+	else {
+		if (is_neg)
+			disp += '-';
+		reverse(disp.begin(), disp.end());
+	}
 	printf("%s", disp.c_str());
 
 	return 0;

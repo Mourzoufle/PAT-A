@@ -11,7 +11,7 @@ int main() {
 	bool is_neg = sum < 0;
 	if (is_neg)
 		sum = -sum;
-	string disp;				// the reversed result
+	string disp;						// the reversed result
 	for (int i = 0; sum > 0; i++) {
 		if ((i > 0) && (i % 3 == 0))	// add comma when 3 digits read
 			disp += ',';

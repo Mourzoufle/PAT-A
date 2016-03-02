@@ -1,10 +1,10 @@
 #include <cstdio>
 
-using namespace std;
+const int MAX_TERM = 1001;
 
 int main() {
-	double *terms = new double[1024];
-	for (int i = 0; i < 1024; i++)
+	double *terms = new double[MAX_TERM];
+	for (int i = 0; i < MAX_TERM; i++)
 		terms[i] = 0;
 	int num_nonzero = 0;
 	for (int i = 0; i < 2; i++) {
@@ -22,7 +22,7 @@ int main() {
 		}
 	}
 	printf("%d", num_nonzero);
-	for (int i = 1023; i >= 0; i--)
+	for (int i = MAX_TERM - 1; i >= 0; i--)
 		if (terms[i] != 0)
 			printf(" %d %.1lf", i, terms[i]);
 

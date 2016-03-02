@@ -1,10 +1,11 @@
 #include <cstdio>
-#include <string>
-#include <stack>
+#include <vector>
 
 using namespace std;
 
-string spells[] = {
+const int MAX_DIGIT = 128;	// max number of the digits
+
+const char SPELLS[][8] = {
 	"zero",
 	"one",
 	"two",
@@ -18,24 +19,22 @@ string spells[] = {
 };
 
 int main() {
-	char num[128];
+	char num[MAX_DIGIT];
 	scanf("%s", num);
 	int sum = 0;
 	for (int i = 0; num[i] != '\0'; i++)
 		sum += num[i] - '0';
-	stack<int> digits;
+
+	vector<int> digits;		// the digits - from the lowest to the highest
 	while (sum > 0) {
-		digits.push(sum % 10);
+		digits.push_back(sum % 10);
 		sum /= 10;
 	}
-	if (digits.size() == 0)
-		digits.push(0);
-	while (true) {
-		printf("%s", spells[digits.top()].c_str());
-		digits.pop();
-		if (digits.size() > 0)
-			printf(" ");
-		else
-			return 0;
-	}
+	if (digits.empty())		// if the sum is zero
+		digits.push_back(0);
+	printf("%s", SPELLS[digits.back()]);
+	for (int i = digits.size() - 2; i >= 0; i--)
+		printf(" %s", SPELLS[digits[i]]);
+
+	return 0;
 }

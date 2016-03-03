@@ -1,3 +1,3 @@
 # PAT-A
-Solutions for [PAT Advanced Level](PAT Advanced Level).<br>
+Solutions for Programming Ability Test (PAT) Practise ([Advanced Level](http://www.patest.cn/contests/pat-a-practise)).<br>
 AC but may not optimal.

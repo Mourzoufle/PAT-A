@@ -1,54 +1,55 @@
-#include <iostream>
+#include <cstdio>
 #include <map>
 
 using namespace std;
 
-const string COURSES[] = {
-	" A",
-	" C",
-	" M",
-	" E"
+const char COURSES[4][2] = {												// course 0: average
+	"A",
+	"C",
+	"M",
+	"E"
 };
 
-int get_rank(int *arr, int size, int idx) {
+/* given the index of student, get the rank in ONE course */
+int get_rank(int *scores, int num_student, int idx_student) {
 	int rank = 1;
-	for (int i = 0; i < size; i++)
-		if (arr[idx] < arr[i])
+	for (int i = 0; i < num_student; i++)
+		if (scores[i] > scores[idx_student])								// the rank is the number of higher scores + 1
 			rank++;
 
 	return rank;
 }
 
 int main() {
-	int num_all, num_query;
-	cin >> num_all >> num_query;
-	int **scores = new int*[4];
+	int num_student, num_query;
+	scanf("%d %d", &num_student, &num_query);
+	int *scores[4];
 	for (int i = 0; i < 4; i++)
-		scores[i] = new int[num_all];
-	map<int, int> indices;
-	for (int i = 0; i < num_all; i++) {
+		scores[i] = new int[num_student];
+	map<int, int> map;														// map of student ids and their entries in the matrix of scores - for query
+	for (int i = 0; i < num_student; i++) {
 		int id;
-		cin >> id >> scores[1][i] >> scores[2][i] >> scores[3][i];
+		scanf("%d %d %d %d", &id, &scores[1][i], &scores[2][i], &scores[3][i]);
 		scores[0][i] = (scores[1][i] + scores[2][i] + scores[3][i]) / 3;
-		indices.insert(pair<int, int>(id, i));
+		map[id] = i;
 	}
 
-	int *ranks = new int[4];
 	for (int i = 0; i < num_query; i++) {
 		int id;
-		cin >> id;
-		if (indices.find(id) == indices.end()) {
-			cout << "N/A" << endl;
+		scanf("%d", &id);
+		if (map.find(id) == map.end()) {									// id not found
+			printf("N/A\n");
 			continue;
 		}
-		int idx = indices[id];
-		int min = 0;
+		int idx_student = map[id], min_rank = num_student + 1, idx_course;	// ensure the initial value of min rank is out of range
 		for (int j = 0; j < 4; j++) {
-			ranks[j] = get_rank(scores[j], num_all, idx);
-			if (ranks[min] > ranks[j])
-				min = j;
+			int cur_rank = get_rank(scores[j], num_student, idx_student);
+			if (cur_rank < min_rank) {										// replace only when the latter course provides a higher rank
+				min_rank = cur_rank;
+				idx_course = j;
+			}
 		}
-		cout << ranks[min] << COURSES[min] << endl;
+		printf("%d %s\n", min_rank, COURSES[idx_course]);
 	}
 
 	return 0;

@@ -1,26 +1,23 @@
-#include <iostream>
 #include <cstdio>
 
-using namespace std;
-
-const string RES[] = {
-	"W ",
-	"T ",
-	"L "
+const char RESULTS[3][2] = {
+	"W",
+	"T",
+	"L"
 };
 
 int main() {
-	double profit = 1;
-	double *odds = new double[3];
+	double profit = 1;				// initial multiplier
+	double odds[3];
 	for (int i = 0; i < 3; i++) {
-		int idx = 0;
+		int idx = 0;				// selected result
 		for (int j = 0; j < 3; j++) {
-			cin >> odds[j];
-			if (odds[idx] < odds[j])
+			scanf("%lf", &odds[j]);
+			if (odds[j] > odds[idx])
 				idx = j;
 		}
 		profit *= odds[idx];
-		cout << RES[idx];
+		printf("%s ", RESULTS[idx]);
 	}
 	printf("%.2lf", (profit * 0.65 - 1) * 2);
 

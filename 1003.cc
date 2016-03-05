@@ -56,7 +56,7 @@ int main() {
 	for (int i = 0; i < num_city; i++) {
 		roads[i] = new int[num_city];
 		for (int j = 0; j < num_city; j++)
-			roads[i][j] = INT_MAX;												// initial - all nodes are seperated
+			roads[i][j] = INT_MAX;												// initial - all nodes are separated
 		roads[i][i] = 0;														// all nodes are self-connected
 	}
 	int *teams = new int[num_city];

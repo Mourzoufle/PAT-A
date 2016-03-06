@@ -1,8 +1,8 @@
-#include <iostream>
+#include <cstdio>
 #include <cmath>
 
-using namespace std;
 
+/* reverse the number according to the given radix */
 int reverse(int num, int radix) {
 	int res = 0;
 	while (num > 0) {
@@ -13,14 +13,15 @@ int reverse(int num, int radix) {
 	return res;
 }
 
+/* check if the number is a prime */
 bool is_prime(int num) {
-	if (num < 2)
+	if (num < 2)			// 0, 1 - false
 		return false;
-	if (num == 2)
+	if (num < 4)			// 2, 3 - true
 		return true;
-	if (num % 2 == 0)
+	if (num % 2 == 0)		// even numbers beside of 2 - false
 		return false;
-	int limit = sqrt(num);
+	int limit = sqrt(num);	// only need to check factors not greater than sqrt(num)
 	for (int i = 3; i <= limit; i += 2)
 		if (num % i == 0)
 			return false;
@@ -30,14 +31,14 @@ bool is_prime(int num) {
 int main() {
 	while (true) {
 		int num, radix;
-		cin >> num;
+		scanf("%d", &num);
 		if (num < 0)
 			break;
-		cin >> radix;
+		scanf("%d", &radix);
 		if (is_prime(num) && is_prime(reverse(num, radix)))
-			cout << "Yes" << endl;
+			printf("Yes\n");
 		else
-			cout << "No" << endl;
+			printf("No\n");
 	}
 
 	return 0;

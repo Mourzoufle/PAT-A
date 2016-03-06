@@ -76,7 +76,7 @@ int main() {
 	for (int i = 0; i < num_record; i++) {
 		if (strcmp(cur_name, records[i].name) != 0) {			// begin to deal with records of a new user
 			if (print)											// the former user has corrent record(s) - then print the total price
-				printf("Total amount: $%.2f\n", total_price);
+				printf("Total amount: $%.2lf\n", total_price);
 			strcpy(cur_name, records[i].name);
 			print = false;
 			idx_on = -1;
@@ -93,12 +93,12 @@ int main() {
 			double cur_price;
 			compute(records[idx_on].time, records[i].time, cur_length, cur_price);
 			total_price += cur_price;
-			printf("%02d:%02d:%02d %02d:%02d:%02d %d $%.2f\n", records[idx_on].time.day, records[idx_on].time.hour, records[idx_on].time.minute, records[i].time.day, records[i].time.hour, records[i].time.minute, cur_length, cur_price);
+			printf("%02d:%02d:%02d %02d:%02d:%02d %d $%.2lf\n", records[idx_on].time.day, records[idx_on].time.hour, records[idx_on].time.minute, records[i].time.day, records[i].time.hour, records[i].time.minute, cur_length, cur_price);
 			idx_on = -1;
 		}	
 	}
 	if (print)													// DO NOT FORGET - the last user has not been checked yet
-		printf("Total amount: $%.2f\n", total_price);
+		printf("Total amount: $%.2lf\n", total_price);
 
 	return 0;
 }

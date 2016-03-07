@@ -32,7 +32,7 @@ void get_roots(int **roads, int num_node, int src, set<int> &roots) {
 	queue.push(src);
 	while (!queue.empty()) {
 		cur_roots.clear();										// nodes with larger length exist, clear the current result
-		int cur_size = queue.size();
+		int cur_size = queue.size();							// number of nodes in the current level - and nodes after them are deeper
 		for (int i = 0; i < cur_size; i++) {
 			int node = queue.front();
 			visit[node] = true;

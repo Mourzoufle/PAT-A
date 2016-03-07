@@ -1,36 +1,33 @@
-#include <iostream>
+#include <cstdio>
 #include <vector>
 
 using namespace std;
 
-void num_to_vec(int num, int base, vector<int> &vector) {
-	while (num > 0) {
-		vector.push_back(num % base);
-		num /= base;
-	}
-	if (vector.empty())
-		vector.push_back(0);
-}
-
 int main() {
-	int num, base;
-	cin >> num >> base;
-	vector<int> vector;
-	num_to_vec(num, base, vector);
-	bool reverse = true;
-	for (int i = 0; i < (vector.size() >> 1); i++) {
-		if (vector[i] != vector[vector.size() - 1 - i]) {
-			reverse = false;
+	int num, radix;
+	scanf("%d %d", &num, &radix);
+
+	vector<int> digits;								// the digits - reversed order according to the radix
+	while (num >= radix) {
+		digits.push_back(num % radix);
+		num /= radix;
+	}
+	digits.push_back(num);
+
+	bool is_palindromic = true;
+	for (int i = 0; i < (digits.size() / 2); i++) {	// check half of the digits
+		if (digits[i] != digits[digits.size() - 1 - i]) {
+			is_palindromic = false;
 			break;
 		}
 	}
-	if (reverse)
-		cout << "Yes" << endl;
+	if (is_palindromic)
+		printf("Yes\n");
 	else
-		cout << "No" << endl;
-	cout << vector.back();
-	for (int i = vector.size() - 2; i >= 0; i--)
-		cout << " " << vector[i];
+		printf("No\n");
+	printf("%d", digits.back());					// digits in reversed order - print from the tail to the head
+	for (int i = digits.size() - 2; i >= 0; i--)
+		printf(" %d", digits[i]);
 
 	return 0;
 }

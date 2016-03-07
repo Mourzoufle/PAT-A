@@ -11,47 +11,52 @@ struct Node {
 	Node(int key, Node *left, Node *right): key(key), left(left), right(right) {};
 };
 
-Node* traversal(int *posts, int *ins, int num_node, int head, int tail) {
+/* get the index of the given number in an array */
+int get_idx(int *nums, int num) {
 	int idx = -1;
-	if (tail < head)
+	while (nums[++idx] != num);
+
+	return idx;
+}
+
+/* get the root of the tree given postorder and inorder sequence */
+Node* get_root(int *postorder, int *inorder, int num_node, int head, int tail) {
+	if (tail < head)						// no number included, an empty tree
 		return NULL;
-	for (int i = num_node - 1; i >= 0; i--) {
-		for (int j = head; j <= tail; j++) {
-			if (posts[i] == ins[j]) {
-				idx = j;
-				break;
-			}
+	int idx_root, max_idx = -1;				// the index of the root in inorder sequence; the max index in postorder sequence of numbers in inorder sequence from head to tail
+	for (int i = head; i <= tail; i++) {
+		int cur_idx = get_idx(postorder, inorder[i]);
+		if (cur_idx > max_idx) {			// the root of this (sub)tree should have the max index in postorder sequence
+			max_idx = cur_idx;
+			idx_root = i;
 		}
-		if (idx >= 0)
-			break;
 	}
-	return new Node(ins[idx], traversal(posts, ins, num_node, head, idx - 1), traversal(posts, ins, num_node, idx + 1, tail));
+
+	return new Node(inorder[idx_root], get_root(postorder, inorder, num_node, head, idx_root - 1), get_root(postorder, inorder, num_node, idx_root + 1, tail));
 }
 
 int main() {
 	int num_node;
 	scanf("%d", &num_node);
-	int *posts = new int[num_node];
-	int *ins = new int[num_node];
+	int *postorder = new int[num_node];
+	int *inorder = new int[num_node];
 	for (int i = 0; i < num_node; i++)
-		scanf("%d", &posts[i]);
+		scanf("%d", &postorder[i]);
 	for (int i = 0; i < num_node; i++)
-		scanf("%d", &ins[i]);
+		scanf("%d", &inorder[i]);
 
-	Node *root = traversal(posts, ins, num_node, 0, num_node - 1);
-	queue<Node*> queue;
-	queue.push(root);
-	printf("%d", root->key);
+	queue<Node*> queue;						// level order traversal
+	queue.push(get_root(postorder, inorder, num_node, 0, num_node - 1));
 	while (!queue.empty()) {
-		if (queue.front()->left != NULL) {
-			printf(" %d", queue.front()->left->key);
-			queue.push(queue.front()->left);
-		}
-		if (queue.front()->right != NULL) {
-			printf(" %d", queue.front()->right->key);
-			queue.push(queue.front()->right);
-		}
+		Node *node = queue.front();
+		printf("%d", node->key);
+		if (node->left != NULL)
+			queue.push(node->left);
+		if (node->right != NULL)
+			queue.push(node->right);
 		queue.pop();
+		if (!queue.empty())
+			printf(" ");
 	}
 
 	return 0;

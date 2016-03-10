@@ -10,7 +10,8 @@ struct Record {
 	int score;
 };
 
-bool compare(Record *a, Record *b) {
+/* compare fuction for sorting records - sorted by score, then id if the scores are equal */
+bool cmp(Record *a, Record *b) {
 	if (a->score != b->score)
 		return a->score > b->score;
 	return a->id < b->id;
@@ -30,27 +31,27 @@ int main() {
 			records.push_back(record);
 		}
 	}
-	sort(records.begin(), records.end(), compare);
+	sort(records.begin(), records.end(), cmp);
 
-	int *ranks = new int[num_location];
-	int *scores = new int[num_location];
-	int *nums_record = new int[num_location];
+	int *nums_record = new int[num_location];						// number of records in each location that are already processed
+	int *cur_ranks = new int[num_location];							// current rank in each location
+	int *cur_scores = new int[num_location];						// corresponding score of the current rank in each location
 	for (int i = 0; i < num_location; i++) {
-		ranks[i] = 1;
-		scores[i] = 0;
+		cur_ranks[i] = 1;
+		cur_scores[i] = 0;
 		nums_record[i] = 0;
 	}
-	int rank = 1, score = records[0]->score;
+	int cur_rank = 1, cur_score = records[0]->score;				// current global rank and score
 	printf("%d\n", records.size());
 	for (int i = 0; i < records.size(); i++) {
 		nums_record[records[i]->location]++;
-		if (scores[records[i]->location] > records[i]->score)
-			ranks[records[i]->location] = nums_record[records[i]->location];
-		scores[records[i]->location] = records[i]->score;
-		if (score > records[i]->score)
-			rank = i + 1;
-		score = records[i]->score;
-		printf("%013lld %d %d %d\n", records[i]->id, rank, records[i]->location + 1, ranks[records[i]->location]);
+		if (cur_scores[records[i]->location] > records[i]->score)	// lower than the current score of this location, update current rank
+			cur_ranks[records[i]->location] = nums_record[records[i]->location];
+		cur_scores[records[i]->location] = records[i]->score;
+		if (cur_score > records[i]->score)							// lower than current global score, update current global rank
+			cur_rank = i + 1;
+		cur_score = records[i]->score;
+		printf("%013lld %d %d %d\n", records[i]->id, cur_rank, records[i]->location + 1, cur_ranks[records[i]->location]);
 	}
 
 	return 0;

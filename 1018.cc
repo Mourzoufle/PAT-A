@@ -75,7 +75,7 @@ int main() {
 	int *distances = dijstra(roads, num_station, dst);
 	vector<vector<int> *> paths;
 	get_paths(roads, distances, num_station, 0, paths, NULL);
-	int min_send = INT_MAX, min_recv = INT_MAX, idx_path;						// least bikes to be sent; (if it is not unique) least bikes to be returned; the selected index of path 
+	int min_send = INT_MAX, min_recv = INT_MAX, idx_path;						// least bikes to be sent; (if it is not unique) least bikes to be returned; the selected index of path
 	for (int i = 0; i < paths.size(); i++) {
 		int cur_send = 0, cur_recv = 0;
 		for (int j = 1; j < paths[i]->size(); j++) {

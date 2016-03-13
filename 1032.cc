@@ -3,36 +3,38 @@
 
 using namespace std;
 
+const int MAX_NODE = 100000;
+
 int main() {
-	int *nexts = new int[100000];
-	int heads[2];
+	int *nexts = new int[MAX_NODE];															// next node of each node
+	int heads[2];																			// head node of each word
 	int num_node;
 	scanf("%d %d %d", &heads[0], &heads[1], &num_node);
 	for (int i = 0; i < num_node; i++) {
-		int cur, next;
-		char c;
-		scanf("%d %c %d", &cur, &c, &next);
-		nexts[cur] = next;
+		int cur_node, next_node;
+		char c;																				// the letter contained in the node is useless
+		scanf("%d %c %d", &cur_node, &c, &next_node);
+		nexts[cur_node] = next_node;
 	}
 
-	stack<int> stacks[2];
+	stack<int> words[2];																	// each word is represented by letters in a stack
 	for (int i = 0; i < 2; i++) {
-		int cur = heads[i];
-		while (cur >= 0) {
-			stacks[i].push(cur);
-			cur = nexts[cur];
+		int cur_node = heads[i];
+		while (cur_node >= 0) {
+			words[i].push(cur_node);
+			cur_node = nexts[cur_node];
 		}
 	}
-	int idx = -1;
-	while (!stacks[0].empty() && !stacks[1].empty() && (stacks[0].top() == stacks[1].top())) {
-		idx = stacks[0].top();
-		stacks[0].pop();
-		stacks[1].pop();
+	int idx_suffix = -1;
+	while (!words[0].empty() && !words[1].empty() && (words[0].top() == words[1].top())) {	// find the first common node from the back to the top of the stacks
+		idx_suffix = words[0].top();
+		words[0].pop();
+		words[1].pop();
 	}
-	if (idx < 0)
+	if (idx_suffix < 0)																		// no common suffix
 		printf("-1");
 	else
-		printf("%05d", idx);
+		printf("%05d", idx_suffix);
 
 	return 0;
 }

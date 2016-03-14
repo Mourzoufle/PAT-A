@@ -1,7 +1,6 @@
 #include <cstdio>
 #include <cmath>
 
-
 /* reverse the number according to the given radix */
 int reverse(int num, int radix) {
 	int res = 0;

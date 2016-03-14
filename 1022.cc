@@ -6,7 +6,7 @@ using namespace std;
 
 struct Book {
 	int id;
-	string contents[5];						// 0: title; 1: author; 2: keywords; 3: publisher; 4: year
+	string contents[5];					// 0: title; 1: author; 2: keywords; 3: publisher; 4: year
 };
 
 /* compare fuction for sorting books - according to the id of each book */
@@ -17,11 +17,10 @@ int main() {
 	scanf("%d", &num_book);
 	Book *books = new Book[num_book];
 	for (int i = 0; i < num_book; i++) {
-		scanf("%d", &books[i].id);
-		getchar();							// jump over '\n'
+		scanf("%d\n", &books[i].id);	// jump over '\n'						
 		char contents[1024];
 		for (int j = 0; j < 5; j++) {
-			gets(contents);					// may contain spaces
+			gets(contents);				// may contain spaces
 			books[i].contents[j] = contents;
 		}
 	}
@@ -32,7 +31,7 @@ int main() {
 		int type;
 		char content[128];
 		scanf("%d: ", &type);
-		gets(content);						// may contain spaces
+		gets(content);					// may contain spaces
 		printf("%d: %s\n", type, content);
 		bool find = false;
 		for (int j = 0; j < num_book; j++) {
@@ -41,7 +40,7 @@ int main() {
 				find = true;
 			}
 		}
-		if (!find)							// no book found for this query
+		if (!find)						// no book found for this query
 			printf("Not Found\n");
 	}
 

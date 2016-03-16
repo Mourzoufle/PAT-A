@@ -2,7 +2,7 @@
 #include <cstring>
 
 int main() {
-	char id_in[16], id_out[16], first[] = "24:00:00", last[] = "00:00:00";	// ensure the initial value of fisrt & last time can be replaced by any student
+	char id_in[16], id_out[16], first[] = "24:00:00", last[] = "00:00:00";	// ensure the initial values of fisrt & last time can be replaced by any student
 	int num_student;
 	scanf("%d", &num_student);
 	for (int i = 0; i < num_student; i++) {

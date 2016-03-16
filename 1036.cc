@@ -18,23 +18,23 @@ struct Student {
 int main() {
 	int num_student;
 	scanf("%d", &num_student);
-	Student max_girl(-1), min_boy(101);
+	Student max_girl(-1), min_boy(101);						// ensure the initial max grade among girls and min grade among boys can be replaced by any student
 	for (int i = 0; i < num_student; i++) {
 		char name[16], id[16];
 		char gender;
 		int grade;
 		scanf("%s %c %s %d", name, &gender, id, &grade);
-		if ((gender == 'F') && (max_girl.grade < grade))
+		if ((gender == 'F') && (max_girl.grade < grade))	// if find a girl with higher grade
 			max_girl.set(name, id, grade);
-		if ((gender == 'M') && (min_boy.grade > grade))
+		if ((gender == 'M') && (min_boy.grade > grade))		// or find a boy with lower grade
 			min_boy.set(name, id, grade);
 	}
 
-	if (max_girl.grade < 0)
+	if (max_girl.grade < 0)									// check if there is any girl
 		printf("Absent\n");
 	else
 		printf("%s %s\n", max_girl.name, max_girl.id);
-	if (min_boy.grade > 100)
+	if (min_boy.grade > 100)								// check if there is any boy
 		printf("Absent\n");
 	else
 		printf("%s %s\n", min_boy.name, min_boy.id);

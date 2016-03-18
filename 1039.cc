@@ -4,36 +4,35 @@
 
 using namespace std;
 
-int str_to_int(char *name) {
-	int res = 0;
-	for (int i = 0; i < 3; i++)
-		res = res * 26 + name[i] - 'A';
+const int MAX_STUDENT = 26 * 26 * 26 * 10;						// max number of students (since each of them is represented by three capital letters and one digit)
 
-	return res * 10 + name[3] - '0';
-}
+/* map each string of name to an integer */
+int str_to_num(char *str) { return (str[0] - 'A') * 6760 + (str[1] - 'A') * 260 + (str[2] - 'A') * 10 + str[3] - '0'; }
 
 int main() {
 	int num_student, num_course;
-	char student[5];
 	scanf("%d %d", &num_student, &num_course);
-	vector<int> *regs = new vector<int>[26 * 26 * 26 * 10];
+	vector<int> *courses_reg = new vector<int>[MAX_STUDENT];	//  list of courses each student registers
 	for (int i = 0; i < num_course; i++) {
 		int course, num_reg;
 		scanf("%d %d", &course, &num_reg);
 		for (int j = 0; j < num_reg; j++) {
+			char student[8];
 			scanf("%s", student);
-			regs[str_to_int(student)].push_back(course);
+			courses_reg[str_to_num(student)].push_back(course);
 		}
 	}
 
+	for (int i = 0; i < MAX_STUDENT; i++)
+		if (!courses_reg[i].empty())
+			sort(courses_reg[i].begin(), courses_reg[i].end());	// the coursed will be listed according to their indices
 	for (int i = 0; i < num_student; i++) {
+		char student[8];
 		scanf("%s", student);
-		printf("%s ", student);
-		vector<int> *reg = &regs[str_to_int(student)];
-		sort(reg->begin(), reg->end());
-		printf("%d", reg->size());
-		for (vector<int>::iterator iter = reg->begin(); iter != reg->end(); iter++)
-			printf(" %d", *iter);
+		int idx_student = str_to_num(student);
+		printf("%s %d", student, courses_reg[idx_student].size());
+		for (int j = 0; j < courses_reg[idx_student].size(); j++)
+			printf(" %d", courses_reg[idx_student][j]);
 		printf("\n");
 	}
 

@@ -77,6 +77,5 @@ int main() {
 	get_roots(roads, num_node, *(deepest_roots.begin()), deepest_roots);
 	for (set<int>::iterator iter = deepest_roots.begin(); iter != deepest_roots.end(); iter++)
 		printf("%d\n", (*iter) + 1);
-
 	return 0;
 }

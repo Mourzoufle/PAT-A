@@ -1,10 +1,6 @@
 #include <cstdio>
 
-const char RESULTS[3][2] = {
-	"W",
-	"T",
-	"L"
-};
+const char RESULTS[3] = {'W', 'T', 'L'};
 
 int main() {
 	double profit = 1;				// initial multiplier
@@ -17,7 +13,7 @@ int main() {
 				idx = j;
 		}
 		profit *= odds[idx];
-		printf("%s ", RESULTS[idx]);
+		printf("%c ", RESULTS[idx]);
 	}
 	printf("%.2lf", (profit * 0.65 - 1) * 2);
 

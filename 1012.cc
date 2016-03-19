@@ -3,12 +3,7 @@
 
 using namespace std;
 
-const char COURSES[4][2] = {												// course 0: average
-	"A",
-	"C",
-	"M",
-	"E"
-};
+const char COURSES[4] = {'A', 'C', 'M', 'E'};								// course 0: average
 
 /* given the index of student, get the rank in ONE course */
 int get_rank(int *scores, int num_student, int idx_student) {
@@ -49,7 +44,7 @@ int main() {
 				idx_course = j;
 			}
 		}
-		printf("%d %s\n", min_rank, COURSES[idx_course]);
+		printf("%d %c\n", min_rank, COURSES[idx_course]);
 	}
 
 	return 0;

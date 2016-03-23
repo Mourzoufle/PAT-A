@@ -1,45 +1,41 @@
-#include <vector>
-#include <map>
-#include <algorithm>
 #include <cstdio>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
+const int MAX_NODE = 100000;
+
 struct Node {
-	int addr;
 	int value;
 	int next;
+
+	Node(): next(-1) {};
 };
 
-bool compare(const Node* a, const Node* b) { return a->value < b->value; }
+/* compare fuction for sorting nodes - according to the value of each node */
+bool cmp(const Node* a, const Node* b) { return a->value < b->value; }
 
 int main() {
+	Node *nodes = new Node[MAX_NODE];
 	int num_node, head;
 	scanf("%d %d", &num_node, &head);
-	Node *nodes = new Node[num_node];
-	map<int, int> indices;
 	for (int i = 0; i < num_node; i++) {
-		scanf("%d %d %d", &nodes[i].addr, &nodes[i].value, &nodes[i].next);
-		indices.insert(pair<int, int>(nodes[i].addr, i));
+		int cur_node;																						// address of the current node
+		scanf("%d", &cur_node);
+		scanf("%d %d", &nodes[cur_node].value, &nodes[cur_node].next);
 	}
-	vector<Node *> list;
-	while (indices.find(head) != indices.end()) {
-		list.push_back(nodes + indices[head]);
-		head = nodes[indices[head]].next;
+
+	vector<Node *> nodes_valid;																				// the nodes that belong to the list beginning with head
+	while (head >= 0) {
+		nodes_valid.push_back(nodes + head);																// the address of the head
+		head = nodes[head].next;
 	}
-	sort(list.begin(), list.end(), compare);
-	if (list.empty())
-		printf("0 -1");
-	else {
-		printf("%d %05d\n", list.size(), (*list.begin())->addr);
-		for (vector<Node *>::iterator iter = list.begin(); iter != list.end(); iter++) {
-			printf("%05d %d ", (*iter)->addr, (*iter)->value);
-			if (iter + 1 != list.end())
-				printf("%05d\n", (*(iter + 1))->addr);
-			else
-				printf("-1\n");
-		}
-	}
+	sort(nodes_valid.begin(), nodes_valid.end(), cmp);
+	printf("%d ", nodes_valid.size());
+	for (int i = 0; i < nodes_valid.size(); i++)
+		printf("%05d\n%05d %d ", nodes_valid[i] - nodes, nodes_valid[i] - nodes, nodes_valid[i]->value);	// the address of each node needs to be printed twice; the address is restored by computing the difference between the node and the address of the array
+	printf("-1");
 	
 	return 0;
 }

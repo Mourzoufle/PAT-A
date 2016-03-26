@@ -1,63 +1,58 @@
 #include <cstdio>
-#include <cstring>
 #include <stack>
 #include <set>
 
 using namespace std;
 
-multiset<int>::iterator last(multiset<int> &set) {
-	multiset<int>::iterator pos = set.end();
-	return --pos;
-}
-
-void reset(multiset<int> &left, multiset<int> &right) {
-	if (left.size() < right.size()) {
-		left.insert(*right.begin());
-		right.erase(right.begin());
+/* balance the size of the bottom and top half of the keys in the stack, the number of the bottom keys is equal to or 1 more than those in the top */
+void balance(multiset<int> &bottom, multiset<int> &top) {
+	if (bottom.size() < top.size()) {				// the top half of the stack is too large
+		bottom.insert(*top.begin());				// move the smallest key of it to the bottom one
+		top.erase(top.begin());
 	}
-	else if (left.size() > right.size() + 1) {
-		right.insert(*last(left));
-		left.erase(last(left));
+	else if (bottom.size() > top.size() + 1) {		// or the bottom half is too large
+		top.insert(*(--bottom.end()));				// move the largest key in it to the top one
+		bottom.erase(--bottom.end());
 	}
 }
 
 int main() {
-	int num_op;
+	int num_op;										// number of operations
 	scanf("%d", &num_op);
 	stack<int> stack;
-	multiset<int> left, right;
+	multiset<int> bottom, top;						// the bottom and top half of the keys in the stack - the 
 	for (int i = 0; i < num_op; i++) {
-		char cmd[16];
+		char cmd[16];								// current command
 		scanf("%s", cmd);
-		if (strcmp(cmd, "Push") == 0) {
+		if (cmd[1] == 'u') {						// "Push"
 			int key;
 			scanf("%d", &key);
 			stack.push(key);
-			if (!left.empty() && (key > *last(left)))
-				right.insert(key);
+			if (!bottom.empty() && (key > *(--bottom.end())))
+				top.insert(key);
 			else
-				left.insert(key);
-			reset(left, right);
+				bottom.insert(key);
+			balance(bottom, top);
 		}
-		else if (strcmp(cmd, "Pop") == 0) {
+		else if (cmd[1] == 'o') {					// "Pop"
 			if (stack.empty())
 				printf("Invalid\n");
 			else {
 				int key = stack.top();
 				stack.pop();
 				printf("%d\n", key);
-				if (key > *last(left))
-					right.erase(right.find(key));
-				else
-					left.erase(left.find(key));
-				reset(left, right);
+				if (key > *(--bottom.end()))		// the popped key is in the top half
+					top.erase(top.find(key));
+				else								// or in the bottom half
+					bottom.erase(bottom.find(key));
+				balance(bottom, top);
 			}
 		}
-		else {
-			if (left.empty())
+		else {										// "PeekMedian"
+			if (bottom.empty())
 				printf("Invalid\n");
 			else
-				printf("%d\n", *last(left));
+				printf("%d\n", *(--bottom.end()));	// the largest key in the bottom is the median
 		}
 	}
 

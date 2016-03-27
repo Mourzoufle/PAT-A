@@ -12,7 +12,7 @@ int reverse(int num, int radix) {
 	return res;
 }
 
-/* check if the number is a prime */
+/* check if the number is prime */
 bool is_prime(int num) {
 	if (num < 2)			// 0, 1 - false
 		return false;

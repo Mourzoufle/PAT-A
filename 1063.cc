@@ -1,35 +1,33 @@
-#include <iostream>
 #include <cstdio>
 #include <set>
+#include <algorithm>
 
 using namespace std;
 
 int main() {
 	int num_set;
-	cin >> num_set;
+	scanf("%d", &num_set);
 	set<int> *sets = new set<int>[num_set];
 	for (int i = 0; i < num_set; i++) {
 		int num_key;
-		cin >> num_key;
+		scanf("%d", &num_key);
 		for (int j = 0; j < num_key; j++) {
 			int key;
-			cin >> key;
+			scanf("%d", &key);
 			sets[i].insert(key);
 		}
 	}
 
 	int num_query;
-	cin >> num_query;
-	int indices[2];
+	scanf("%d", &num_query);
 	for (int i = 0; i < num_query; i++) {
-		int indices[2];
-		cin >> indices[0] >> indices[1];
-		int num_inter = 0;
-		int idx = sets[--indices[0]].size() < sets[--indices[1]].size() ? 0 : 1;
-		for (set<int>::iterator iter = sets[indices[idx]].begin(); iter != sets[indices[idx]].end(); iter++)
-			if (sets[indices[1 - idx]].find(*iter) != sets[indices[1 - idx]].end())
-				num_inter++;
-		printf("%.1f\%\n", 100.0 * num_inter / (sets[indices[idx]].size() + sets[indices[1 - idx]].size() - num_inter));
+		int indices[2];			// the indices of sets in query
+		scanf("%d %d", &indices[0], &indices[1]);
+		indices[0]--;
+		indices[1]--;
+		set<int> intersection;	// the intersection of the two sets
+		set_intersection(sets[indices[0]].begin(), sets[indices[0]].end(), sets[indices[1]].begin(), sets[indices[1]].end(), inserter(intersection, intersection.begin()));
+		printf("%.1lf%%\n", 100.0 * intersection.size() / (sets[indices[0]].size() + sets[indices[1]].size() - intersection.size()));
 	}
 
 	return 0;

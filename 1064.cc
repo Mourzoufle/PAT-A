@@ -1,4 +1,4 @@
-#include <iostream>
+#include <cstdio>
 #include <stack>
 #include <algorithm>
 
@@ -6,29 +6,28 @@ using namespace std;
 
 int main() {
 	int num_key;
-	cin >> num_key;
+	scanf("%d", &num_key);
 	int *keys = new int[num_key];
 	for (int i = 0; i < num_key; i++)
-		cin >> keys[i];
+		scanf("%d", &keys[i]);
 	sort(keys, keys + num_key);
 
-	int *tree = new int[num_key];
-	stack<int> poses;
-	int pos = 1;
+	int *positions = new int[num_key];	// position of each key in the tree
+	stack<int> stack;					// first insert the smallest to the largest key in the tree in inorder
+	int cur_node = 1;
 	for (int i = 0; i < num_key; i++) {
-		while (pos <= num_key) {
-			poses.push(pos);
-			pos <<= 1;
+		while (cur_node <= num_key) {
+			stack.push(cur_node);
+			cur_node *= 2;				// the left child of the current node
 		}
-		pos = poses.top();
-		poses.pop();
-		tree[pos - 1] = keys[i];
-		pos = (pos << 1) + 1;
+		cur_node = stack.top();
+		stack.pop();
+		positions[cur_node - 1] = keys[i];
+		cur_node = cur_node * 2 + 1;	// the right child of the current node
 	}
-	
-	cout << tree[0];
+	printf("%d", positions[0]);			// the nodes in the tree are just stored in level order
 	for (int i = 1; i < num_key; i++)
-		cout << " " << tree[i];
+		printf(" %d", positions[i]);
 
 	return 0;
 }

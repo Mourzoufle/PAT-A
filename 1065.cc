@@ -8,9 +8,9 @@ int main() {
 		scanf("%lld %lld %lld", &a, &b, &c);
 		long long sum = a + b;
 		bool grt;
-		if ((a > 0) && (b > 0) && (sum <= 0))
+		if ((a > 0) && (b > 0) && (sum <= 0))		// overflow
 			grt = true;
-		else if ((a < 0) && (b < 0) && (sum >= 0))
+		else if ((a < 0) && (b < 0) && (sum >= 0))	// underflow
 			grt = false;
 		else
 			grt = sum > c;

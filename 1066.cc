@@ -9,6 +9,7 @@ struct Node {
 	Node(int key): key(key), left(NULL), right(NULL) {};
 };
 
+/* get the height of the current node */
 int get_height(Node *node) {
 	if (node == NULL)
 		return 0;
@@ -16,36 +17,42 @@ int get_height(Node *node) {
 		return node->height;
 }
 
+/* set the height of the current node, the height is max(get_height(left), get_height(right)) + 1 */
 void set_height(Node *node) { node->height = get_height(node->left) > get_height(node->right) ? get_height(node->left) + 1 : get_height(node->right) + 1; }
 
+/* rotate function for the case that the new key is inserted into the left subtree of the left child and causes unbalance */
 Node* rotate_LL(Node *root) {
 	Node *left = root->left;
 	root->left = left->right;
 	left->right = root;
-	set_height(root);
+	set_height(root);	// DO NOT FORGET - the height of root is changed and should be updated immediately
 
 	return left;
 }
 
+/* rotate function for the case that the new key is inserted into the right subtree of the right child and causes unbalance */
 Node* rotate_RR(Node *root) {
 	Node *right = root->right;
 	root->right = right->left;
 	right->left = root;
-	set_height(root);
+	set_height(root);	// DO NOT FORGET - the height of root is changed and should be updated immediately
 
 	return right;
 }
 
+/* rotate function for the case that the new key is inserted into the right subtree of the left child and causes unbalance */
 Node* rotate_LR(Node *root) {
 	root->left = rotate_RR(root->left);
 	return rotate_LL(root);
 }
 
+/* rotate function for the case that the new key is inserted into the left subtree of the right child and causes unbalance */
 Node* rotate_RL(Node *root) {
 	root->right = rotate_LL(root->right);
 	return rotate_RR(root);
 }
 
+/* insert a key */
 Node* insert(Node *root, int key) {
 	if (root == NULL)
 		root = new Node(key);
@@ -53,22 +60,21 @@ Node* insert(Node *root, int key) {
 		root->left = insert(root->left, key);
 		if (get_height(root->left) - get_height(root->right) > 1) {
 			if (key < root->left->key)
-				root = rotate_LL(root);
+				return rotate_LL(root);
 			else
-				root = rotate_LR(root);
+				return rotate_LR(root);
 		}
 	}
 	else {
 		root->right = insert(root->right, key);
 		if (get_height(root->right) - get_height(root->left) > 1) {
 			if (key > root->right->key)
-				root = rotate_RR(root);
+				return rotate_RR(root);
 			else
-				root = rotate_RL(root);
+				return rotate_RL(root);
 		}
 	}
-	set_height(root);
-
+	set_height(root);	// update the height of the root
 	return root;
 }
 

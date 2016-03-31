@@ -39,9 +39,9 @@ int main() {
 		}
 		if (idx_next < 0) {																										// no station to go for
 			if (dst - stations[idx_cur].distance > capacity * avg_distance)														// if the car cannot get to the destination - print the maximum distance
-				printf("The maximum travel distance = %.2f", stations[idx_cur].distance + capacity * avg_distance);
+				printf("The maximum travel distance = %.2lf", stations[idx_cur].distance + capacity * avg_distance);
 			else																												// or print the total price
-				printf("%.2f", price + ((dst - stations[idx_cur].distance) / avg_distance - cur_capacity) * stations[idx_cur].price);
+				printf("%.2lf", price + ((dst - stations[idx_cur].distance) / avg_distance - cur_capacity) * stations[idx_cur].price);
 			break;
 		}
 		else {
@@ -50,7 +50,7 @@ int main() {
 				cur_capacity = 0;
 			}
 			else if ((dst - stations[idx_cur].distance) <= capacity * avg_distance) {											// or no cheaper gas the car can currently expect, but the current station can make it get to the destination - fill just enough gas
-				printf("%.2f", price + ((dst - stations[idx_cur].distance) / avg_distance - cur_capacity) * stations[idx_cur].price);
+				printf("%.2lf", price + ((dst - stations[idx_cur].distance) / avg_distance - cur_capacity) * stations[idx_cur].price);
 				break;
 			}
 			else {																												// or make the tank full at the current station, and search at the next one

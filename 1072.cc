@@ -3,8 +3,6 @@
 #include <climits>
 #include <cfloat>
 
-using namespace std;
-
 /* convert string representation of houses and locations for gas station to indices in the map */
 int str_to_idx(char *str, int num_house) {
 	if (str[0] == 'G')														// a location for gas station

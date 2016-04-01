@@ -1,38 +1,34 @@
 #include <cstdio>
+#include <cstdlib>
 #include <string>
 #include <map>
 
 using namespace std;
 
 int main() {
-	char str[1 << 21];
-	gets(str);
-	string cur;
-	map<string, int> counts;
-	for (int i = 0; str[i] != '\0'; i++) {
-		if ((str[i] >= 'A') && (str[i] <= 'Z'))
-			str[i] += 'a' - 'A';
-		if (((str[i] >= 'a') && (str[i] <= 'z')) || ((str[i] >= '0') && (str[i] <= '9')))
-			cur += str[i];
-		else if (!cur.empty()) {
-			if (counts.find(cur) == counts.end())
-				counts[cur] = 1;
+	string cur_word;					// current word
+	map<string, int> counts_word;		// frequency of each word
+	for (char c = tolower(getchar()); (c != '\0') && (c != EOF); c = tolower(getchar())) {
+		if (((c >= 'a') && (c <= 'z')) || ((c >= '0') && (c <= '9')))
+			cur_word += c;
+		else if (!cur_word.empty()) {	// current word is full read
+			if (counts_word.find(cur_word) == counts_word.end())
+				counts_word[cur_word] = 1;
 			else
-				counts[cur]++;
-			cur = "";
+				counts_word[cur_word]++;
+			cur_word = "";
 		}
 	}
-	if (!cur.empty()) {
-		if (counts.find(cur) == counts.end())
-			counts[cur] = 1;
+	if (!cur_word.empty()) {
+		if (counts_word.find(cur_word) == counts_word.end())
+			counts_word[cur_word] = 1;
 		else
-			counts[cur]++;
+			counts_word[cur_word]++;
 	}
-
-	for (map<string, int>::iterator iter = counts.begin(); iter != counts.end(); iter++)
-		if (cur.empty() || (counts[cur] < iter->second))
-			cur = iter->first;
-	printf("%s %d", cur.c_str(), counts[cur]);
+	for (map<string, int>::iterator iter = counts_word.begin(); iter != counts_word.end(); iter++)
+		if (cur_word.empty() || (counts_word[cur_word] < iter->second))
+			cur_word = iter->first;
+	printf("%s %d", cur_word.c_str(), counts_word[cur_word]);
 
 	return 0;
 }

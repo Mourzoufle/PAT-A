@@ -1,60 +1,57 @@
-#include <iostream>
+#include <cstdio>
+#include <cmath>
 
-using namespace std;
-
-int next_prime(int num) {
-	if (num < 2)
-		return 2;
-	num = ((num >> 1) << 1) + 1;
-	while (true) {
-		bool is_prime = true;
-		for (int i = 3; i * i <= num; i += 2) {
-			if (num % i == 0) {
-				is_prime = false;
-				break;
-			}
-		}
-		if (is_prime)
-			return num;
-		else
-			num += 2;
-	}
+/* check if the number is prime */
+bool is_prime(int num) {
+	if (num < 2)					// 0, 1 - false
+		return false;
+	if (num < 4)					// 2, 3 - true
+		return true;
+	if (num % 2 == 0)				// even numbers beside of 2 - false
+		return false;
+	int limit = sqrt(num);			// only need to check factors not greater than sqrt(num)
+	for (int i = 3; i <= limit; i += 2)
+		if (num % i == 0)
+			return false;
+	return true;
 }
 
+/* insert the key into the given table */
 int insert(int *table, int size, int key) {
-	int base = key % size;
+	int base_addr = key % size;		// the base address address of the key
 	for (int i = 0; i < size; i++) {
-		int pos = (base + i * i) % size;
-		if (table[pos] == 0) {
-			table[pos] = key;
-			return pos;
+		int cur_addr = (base_addr + i * i) % size;
+		if (table[cur_addr] == 0) {	// the current address is available
+			table[cur_addr] = key;
+			return cur_addr;
 		}
 	}
-
-	return -1;
+	return -1;						// the key cannot get a position to be inserted
 }
 
 int main() {
-	int size, num;
-	cin >> size >> num;
-	size = next_prime(size);
+	int size, num_key;
+	scanf("%d %d", &size, &num_key);
+	if (size < 3)					// find the next prime
+		size = 2;
+	else {
+		size = size / 2 * 2 + 1;
+		while (!is_prime(size))
+			size += 2;
+	}
 	int *table = new int[size];
 	for (int i = 0; i < size; i++)
 		table[i] = 0;
-	int *nums = new int[num];
-	int *poses = new int[num];
-	for (int i = 0; i < num; i++) {
-		cin >> nums[i];
-		poses[i] = insert(table, size, nums[i]);
-	}
-
-	for (int i = 0; i < num; i++) {
+	for (int i = 0; i < num_key; i++) {
 		if (i > 0)
-			cout << " ";
-		if (poses[i] < 0)
-			cout << "-";
+			printf(" ");
+		int key;
+		scanf("%d", &key);
+		int addr = insert(table, size, key);
+		if (addr < 0)
+			printf("-");
 		else
-			cout << poses[i];
+			printf("%d", addr);
 	}
 
 	return 0;

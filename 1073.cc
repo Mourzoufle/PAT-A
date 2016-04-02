@@ -1,37 +1,35 @@
-#include <iostream>
-#include <string>
-#include <sstream>
-
-using namespace std;
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
 
 int main() {
-	string num;
-	cin >> num;
-	if (num[0] == '-')
-		cout << num.substr(0, 1);
-	int expon;
-	stringstream ss;
-	ss << num.substr(num.find('E') + 1);
-	ss >> expon;
-	num = num.substr(1, num.find('E') - 1);
-	if (expon < 0) {
-		cout << "0.";
+	char str[16384];
+	scanf("%s", str);
+
+	if (str[0] == '-')					// print the minus sign
+		printf("-");
+
+	int expon, idx = 3;					// the exponent of the number; the index of the exponent notification
+	while (str[idx++] != 'E');
+	expon = atoi(str + idx);
+	str[--idx] = '\0';					// the exponent part is no longer needed
+	if (expon < 0) {					// number less than 1
+		printf("0.");
 		for (int i = -1; i > expon; i--)
-			cout << "0";
-		cout << num.substr(0, 1) << num.substr(2);
+			printf("0");
+		printf("%c%s", str[1], str + 3);
 	}
-	else {
-		cout << num.substr(0, 1);
-		num = num.substr(2);
-		if (expon <= num.length()) {
-			cout << num.substr(0, expon);
-			if (expon < num.length())
-				cout << "." << num.substr(expon);
+	else {								// number no less than 1
+		printf("%c", str[1]);
+		if (expon < strlen(str + 3)) {	// the number has fractional part
+			for (int i = 0; i < expon; i++)
+				printf("%c", str[i + 3]);
+			printf(".%s", str + expon + 3);
 		}
-		else {
-			cout << num;
-			for (int i = num.length(); i < expon; i++)
-				cout << "0";
+		else {							// the number has no fractional part, may add zero to the tail of it
+			printf("%s", str + 3);
+			for (int i = strlen(str + 3); i < expon; i++)
+				printf("0");
 		}
 	}
 

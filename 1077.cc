@@ -1,43 +1,34 @@
-#include <iostream>
-#include <string>
-#include <algorithm>
-#include <climits>
-
-using namespace std;
+#include <cstdio>
+#include <cstring>
 
 int main() {
 	int num_str;
-	cin >> num_str;
-	cin.ignore();
-	string *strs = new string[num_str];
-	int min_lenth = INT_MAX;
+	scanf("%d\n", &num_str);
+	char **strs = new char *[num_str];
 	for (int i = 0; i < num_str; i++) {
-		getline(cin, strs[i]);
-		if (strs[i].length() < min_lenth)
-			min_lenth = strs[i].length();
+		strs[i] = new char[512];
+		gets(strs[i]);
 	}
 
-	string suffix;
-	for (int i = 1; i <= min_lenth; i++) {
-		char c = strs[0][strs[0].size() - i];
-		bool equal = true;
-		for (int j = 1; j < num_str; j++) {
-			if (strs[j][strs[j].size() - i] != c) {
-				equal = false;
+	int *indices = new int[num_str];	// the index of each string at which the character is under processing
+	for (int i = 0; i < num_str; i++)
+		indices[i] = strlen(strs[i]);
+	while (true) {
+		bool is_same = true;			// flag indicating if the current position of each string is still part of the common suffix
+		for (int i = 0; i < num_str; i++) {
+			indices[i]--;
+			if ((indices[i] < 0) || (strs[i][indices[i]] != strs[0][indices[0]])) {
+				is_same = false;
 				break;
 			}
 		}
-		if (equal)
-			suffix += c;
-		else
+		if (!is_same)
 			break;
 	}
-	if (suffix.empty())
-		cout << "nai";
-	else {
-		reverse(suffix.begin(), suffix.end());
-		cout << suffix;
-	}
+	if (strs[0][++indices[0]] == '\0')	// no common suffix
+		printf("nai");
+	else
+		printf("%s", strs[0] + indices[0]);
 
 	return 0;
 }

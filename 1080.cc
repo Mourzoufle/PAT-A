@@ -1,61 +1,62 @@
-#include <iostream>
+#include <cstdio>
 #include <vector>
 #include <algorithm>
 
 using namespace std;
 
-struct Student {
+struct Applicant {
 	int idx;
-	int score_e;
-	int score_i;
-	vector<int> schools;
+	int grade_e;																												// national entrance exam grade
+	int grade_i;																												// interview grade
+	vector<int> schools;																										// schools the applicant preferred
 };
 
-bool compare(const Student &a, const Student &b) {
-	if (a.score_e + a.score_i != b.score_e + b.score_i)
-		return a.score_e + a.score_i > b.score_e + b.score_i;
-	return a.score_e > b.score_e;
+/* compare fuction for sorting applicants - first according to the final grade, then sorted by the national entrance exam grade if there is a tie */
+bool cmp(const Applicant &a, const Applicant &b) {
+	if (a.grade_e + a.grade_i != b.grade_e + b.grade_i)
+		return a.grade_e + a.grade_i > b.grade_e + b.grade_i;
+	return a.grade_e > b.grade_e;
 }
 
 int main() {
-	int num_student, num_school, num_choice;
-	cin >> num_student >> num_school >> num_choice;
-	int *quotas = new int[num_school];
+	int num_applicant, num_school, num_choice;
+	scanf("%d %d %d", &num_applicant, &num_school, &num_choice);
+	int *quotas = new int[num_school];																							// quota of each school
 	for (int i = 0; i < num_school; i++)
-		cin >> quotas[i];
-	Student *students = new Student[num_student];
-	for (int i = 0; i < num_student; i++) {
-		students[i].idx = i;
-		cin >> students[i].score_e >> students[i].score_i;
+		scanf("%d", &quotas[i]);
+	Applicant *applicants = new Applicant[num_applicant];
+	for (int i = 0; i < num_applicant; i++) {
+		applicants[i].idx = i;
+		scanf("%d %d", &applicants[i].grade_e, &applicants[i].grade_i);
 		for (int j = 0; j < num_choice; j++) {
 			int school;
-			cin >> school;
-			students[i].schools.push_back(school);
+			scanf("%d", &school);
+			applicants[i].schools.push_back(school);
 		}
 	}
-	sort(students, students + num_student, compare);
+	sort(applicants, applicants + num_applicant, cmp);
 
-	vector<int> *admits = new vector<int>[num_school];
-	for (int i = 0; i < num_student; i++) {
+	vector<int> *admissions = new vector<int>[num_school];																		// admissions of each school
+	for (int i = 0; i < num_applicant; i++) {
 		for (int j = 0; j < num_choice; j++) {
-			int school = students[i].schools[j];
-			if ((admits[school].size() < quotas[school]) || !compare(students[admits[school].back()], students[i])) {
-				admits[school].push_back(i);
+			int school = applicants[i].schools[j];
+			if ((admissions[school].size() < quotas[school]) || !cmp(applicants[admissions[school].back()], applicants[i])) {	// if the school is still available or the applicant ties against the last one in the admissions
+				admissions[school].push_back(i);
 				break;
 			}
 		}
 	}
 	for (int i = 0; i < num_school; i++) {
-		if (admits[i].empty()) {
-			cout << endl;
+		if (admissions[i].empty()) {
+			printf("\n");
 			continue;
 		}
-		for (int j = 0; j < admits[i].size(); j++)
-			admits[i][j] = students[admits[i][j]].idx;
-		sort(admits[i].begin(), admits[i].end());
-		for (int j = 0; j < admits[i].size() - 1; j++)
-			cout << admits[i][j] << " ";
-		cout << admits[i].back() << endl;
+		for (int j = 0; j < admissions[i].size(); j++)
+			admissions[i][j] = applicants[admissions[i][j]].idx;																// replace the rank of each applicant with the index
+		sort(admissions[i].begin(), admissions[i].end());
+		for (int j = 0; j < admissions[i].size() - 1; j++)
+			printf("%d ", admissions[i][j]);
+		printf("%d\n", admissions[i].back());
 	}
 
 	return 0;

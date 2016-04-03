@@ -1,6 +1,7 @@
 #include <cstdio>
 
-long long gcd(long long a, long long b) {
+/* get the greatest common divisor of a and b */
+long get_gcd(long a, long b) {
 	while (true) {
 		if (a % b == 0)
 			return b;
@@ -12,38 +13,37 @@ long long gcd(long long a, long long b) {
 }
 
 int main() {
-	int num;
-	scanf("%d", &num);
-	long long *nums = new long long[num];
-	long long *denoms = new long long [num];
-	long long lcm = 1;
-	for (int i = 0; i < num; i++) {
-		scanf("%lld/%lld", nums + i, denoms + i);
-		lcm *= denoms[i] / gcd(lcm, denoms[i]);
+	int num_num;																				// number of rational numbers
+	scanf("%d", &num_num);
+	long *numerators = new long[num_num];
+	long *denominators = new long[num_num];
+	long long common_denominator = 1;															// the common denominator - lowest common multiple of all the denominators
+	for (int i = 0; i < num_num; i++) {
+		scanf("%ld/%ld", &numerators[i], &denominators[i]);
+		common_denominator *= denominators[i] / get_gcd(common_denominator, denominators[i]);	// lcm(a, b) = a * b / gcd(a, b)
 	}
-	long long sum = 0;
-	for (int i = 0; i < num; i++) {
-		nums[i] *= lcm / denoms[i];
-		sum += nums[i];
-	}
-	if (sum < 0) {
-		printf("-");
-		sum = -sum;
-	}
-	if (sum == 0)
+
+	long long sum_numerator = 0;																// sum of all the numerators (with the common denominator)
+	for (int i = 0; i < num_num; i++)
+		sum_numerator += numerators[i] * (common_denominator / denominators[i]);
+	if (sum_numerator == 0)																		// just print 0
 		printf("0");
 	else {
-		long long factor = gcd(sum, lcm);
-		sum /= factor;
-		lcm /= factor;
-		if (sum >= lcm) {
-			printf("%lld", sum / lcm);
-			sum %= lcm;
-			if (sum != 0)
+		if (sum_numerator < 0) {
+			printf("-");
+			sum_numerator = -sum_numerator;
+		}
+		long long gcd = get_gcd(sum_numerator, common_denominator);
+		sum_numerator /= gcd;
+		common_denominator /= gcd;
+		if (sum_numerator >= common_denominator) {												// has integer part
+			printf("%lld", sum_numerator / common_denominator);
+			sum_numerator %= common_denominator;
+			if (sum_numerator != 0)																// has fractional part
 				printf(" ");
 		}
-		if (sum != 0)
-			printf("%lld/%lld", sum, lcm);
+		if (sum_numerator != 0)
+			printf("%lld/%lld", sum_numerator, common_denominator);
 	}
 
 	return 0;

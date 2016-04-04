@@ -1,9 +1,9 @@
-#include <iostream>
+#include <cstdio>
 #include <string>
 
 using namespace std;
 
-const string DIGITS[] = {
+const string DIGITS[] = {		// spell of each digit
 	" ling",
 	" yi",
 	" er",
@@ -16,11 +16,16 @@ const string DIGITS[] = {
 	" jiu"
 };
 
-void get_spell(string &spell, bool add_ling, int num) {
+/* get the spell of part of the number (in 10000) */
+string get_spell(int num, bool has_higher_digit, const string suffix) {
+	if (num == 0)
+		return "";
+
+	string spell;
 	int qian = num / 1000, bai = (num % 1000) / 100, shi = (num % 100) / 10, ge = num % 10;
 	if (qian > 0)
 		spell += DIGITS[qian] + " Qian";
-	else if (add_ling)
+	else if (has_higher_digit)	// lower than 1000 and there are digits higher than this part of the number
 		spell += DIGITS[0];
 	if (bai > 0)
 		spell += DIGITS[bai] + " Bai";
@@ -32,12 +37,14 @@ void get_spell(string &spell, bool add_ling, int num) {
 		spell += DIGITS[0];
 	if (ge > 0)
 		spell += DIGITS[ge];
+	return spell + suffix;
 }
 
 int main() {
 	int num;
-	cin >> num;
-	string spell;
+	scanf("%d", &num);
+
+	string spell;				// spell of the number
 	if (num < 0) {
 		spell += " Fu";
 		num = -num;
@@ -45,15 +52,10 @@ int main() {
 	int yi = num / 100000000, wan = (num % 100000000) / 10000, ge = num % 10000;
 	if (yi > 0)
 		spell += DIGITS[yi] + " Yi";
-	if (wan > 0) {
-		get_spell(spell, yi > 0, wan);
-		spell += " Wan";
-	}
-	if (ge > 0)
-		get_spell(spell, (yi > 0) || (wan > 0), ge);
-	if (num == 0)
-		spell += DIGITS[0];
-	cout << spell.substr(1);
+	spell += get_spell(wan, yi > 0, " Wan") + get_spell(ge, num > 9999, "");
+	if (spell.empty())
+		spell = DIGITS[0];
+	printf("%s", spell.substr(1).c_str());
 
 	return 0;
 }

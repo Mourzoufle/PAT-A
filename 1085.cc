@@ -1,25 +1,25 @@
-#include <iostream>
+#include <cstdio>
 #include <algorithm>
 
 using namespace std;
 
 int main() {
-	int num, ratio;
-	cin >> num >> ratio;
-	int *nums = new int[num];
-	for (int i = 0; i < num; i++)
-		cin >> nums[i];
-	sort(nums, nums + num);
+	int num_num, para;								// number of the numbers; the paramater
+	scanf("%d %d", &num_num, &para);
+	int *nums = new int[num_num];
+	for (int i = 0; i < num_num; i++)
+		scanf("%d", &nums[i]);
+	sort(nums, nums + num_num);
 
-	int length = 1;
-	for (int i = 0; i < num; i++) {
-		while (i + length < num) {
-			if (nums[i] < 1.0 * nums[i + length] / ratio)
+	int length = 1;									// the max length of perfect sequence
+	for (int i = 0; i + length < num_num; i++) {	// halt when no larger length can be found
+		while (i + length < num_num) {
+			if (1.0 * nums[i + length] / nums[i] > para)
 				break;
 			length++;
 		}
 	}
-	cout << length;
+	printf("%d", length);
 
 	return 0;
 }

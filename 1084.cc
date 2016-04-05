@@ -1,30 +1,26 @@
-#include <iostream>
-
-using namespace std;
+#include <cstdio>
 
 int main() {
-	string ori, cur, keys;
-	cin >> ori >> cur;
-	int idx_ori = 0, idx_cur = 0;
-	while (idx_ori < ori.size()) {
-		if (ori[idx_ori] == cur[idx_cur])
-			idx_cur++;
+	bool check[256];						// flag indicating if each key is checked to be broken
+	for (int i = 0; i < 256; i++)
+		check[i] = false;
+	char origin[128], out[128];				// the original string; the typed-out string
+	scanf("%s\n%s", origin, out);
+
+	int idx = 0;							// index of character in the typed-out string that is currently under processing
+	for (int i = 0; origin[i] != '\0'; i++) {
+		if (origin[i] == out[idx])
+			idx++;
 		else {
-			if ((ori[idx_ori] >= 'a') && (ori[idx_ori] <= 'z'))
-				ori[idx_ori] += 'A' - 'a';
-			bool detect = false;
-			for (int i = 0; i < keys.size(); i++) {
-				if (keys[i] == ori[idx_ori]) {
-					detect = true;
-					break;
-				}
+			char c = origin[i];
+			if ((c >= 'a') && (c <= 'z'))	// capitalized
+				c += 'A' - 'a';
+			if (!check[c]) {				// first time this key is checked - print it
+				putchar(c);
+				check[c] = true;
 			}
-			if (!detect)
-				keys += ori[idx_ori];
 		}
-		idx_ori++;
 	}
-	cout << keys;
 
 	return 0;
 }

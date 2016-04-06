@@ -3,77 +3,68 @@
 
 using namespace std;
 
-long long GCD(long long a, long long b) {
+/* get the greatest common divisor of a and b */
+long long get_gcd(long long a, long long b) {
 	while (true) {
-		a %= b;
-		if (a == 0)
+		if (a % b == 0)
 			return b;
-		b %= a;
-		if (b == 0)
+		a %= b;
+		if (b % a == 0)
 			return a;
+		b %= a;
 	}
 }
 
-void print(long long num, long long denom) {
-	if (denom == 0) {
-		printf("Inf");
-		return;
+/* get the string representation of the given rational number */
+string get_str(long long numerator, long long denominator) {
+	if (denominator == 0)																					// an illegal number
+		return "Inf";
+	if (numerator == 0)
+		return "0";
+	string res;
+	if (denominator < 0) {
+		numerator = -numerator;
+		denominator = -denominator;
 	}
-	if (num == 0) {
-		printf("0");
-		return;
-	}
-	if (denom < 0) {
-		num = -num;
-		denom = -denom;
-	}
-
-	bool is_neg = num < 0;
+	bool is_neg = numerator < 0;
 	if (is_neg) {
-		printf("(-");
-		num = -num;
+		res += "(-";
+		numerator = -numerator;
 	}
-	if (num >= denom) {
-		printf("%lld", num / denom);
-		num %= denom;
-		if (num > 0)
-			printf(" ");
+	if (numerator >= denominator) {																			// has integer part
+		char str[32];
+		sprintf(str, "%ld", numerator / denominator);
+		res += str;
+		numerator %= denominator;
+		if (numerator != 0)
+			res += ' ';
 	}
-	if (num > 0) {
-		long long gcd = GCD(num, denom);
-		printf("%lld", num / gcd);
-		if (denom > gcd)
-			printf("/%lld", denom / gcd);
+	if (numerator != 0) {																					// has fractional part
+		char str[32];
+		long long gcd = get_gcd(numerator, denominator);
+		sprintf(str, "%ld", numerator / gcd);
+		res += str;
+		if (denominator != gcd) {
+			sprintf(str, "/%ld", denominator / gcd);
+			res += str;
+		}
 	}
 	if (is_neg)
-		printf(")");
+		res += ')';
+
+	return res;
 }
 
 int main() {
-	string ops[4] = { " + ", " - ", " * ", " / " };
-	long long num_a, num_b, denom_a, denom_b;
-	scanf("%lld/%lld %lld/%lld", &num_a, &denom_a, &num_b, &denom_b);
-	long long gcd = GCD(denom_a, denom_b);
-	for (int i = 0; i < 4; i++) {
-		print(num_a, denom_a);
-		printf("%s", ops[i].c_str());
-		print(num_b, denom_b);
-		printf(" = ");
-		switch (i) {
-		case 0:
-			print(num_a * (denom_b / gcd) + num_b * (denom_a / gcd), denom_a * (denom_b / gcd));
-			break;
-		case 1:
-			print(num_a * (denom_b / gcd) - num_b * (denom_a / gcd), denom_a * (denom_b / gcd));
-			break;
-		case 2:
-			print(num_a * num_b, denom_a * denom_b);
-			break;
-		default:
-			print(num_a * denom_b, denom_a * num_b);
-		}
-		printf("\n");
-	}
+	long long numerator_a, denominator_a, numerator_b, denominator_b;
+	scanf("%ld/%ld %ld/%ld", &numerator_a, &denominator_a, &numerator_b, &denominator_b);
+
+	string str_a = get_str(numerator_a, denominator_a), str_b = get_str(numerator_b, denominator_b);
+	long long common_denominator = denominator_a / get_gcd(denominator_a, denominator_b) * denominator_b;	// lcm(a, b) = a * b / gcd(a, b)
+	printf("%s + %s = %s\n", str_a.c_str(), str_b.c_str(), get_str(numerator_a * common_denominator / denominator_a + numerator_b * common_denominator / denominator_b, common_denominator).c_str());
+	printf("%s - %s = %s\n", str_a.c_str(), str_b.c_str(), get_str(numerator_a * common_denominator / denominator_a - numerator_b * common_denominator / denominator_b, common_denominator).c_str());
+	printf("%s * %s = %s\n", str_a.c_str(), str_b.c_str(), get_str(numerator_a * numerator_b, denominator_a * denominator_b).c_str());
+	printf("%s / %s = %s\n", str_a.c_str(), str_b.c_str(), get_str(numerator_a * denominator_b, denominator_a * numerator_b).c_str());
 
 	return 0;
 }

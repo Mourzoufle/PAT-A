@@ -1,54 +1,65 @@
-#include <iostream>
+#include <cstdio>
 #include <stack>
 
 using namespace std;
 
 struct Node {
-	int value;
+	int key;
 	Node *left;
 	Node *right;
 
-	Node(int value): value(value), left(NULL), right(NULL) {};
+	Node(int key): key(key), left(NULL), right(NULL) {};
 };
 
-void postorder(Node *root, bool is_root) {
-	if (root->left != NULL)
-		postorder(root->left, false);
-	if (root->right != NULL)
-		postorder(root->right, false);
-	cout << root->value;
-	if (!is_root)
-		cout << " ";
-}
-
 int main() {
-	int num_node;
-	cin >> num_node;
 	stack<Node *> stack;
-	string cmd;
-	int value;
-	cin >> cmd >> value;
-	Node *root = new Node(value);
-	Node *cur = root;
+	int num_node;
+	scanf("%d", &num_node);
+	char cmd[8];																							// the command
+	int key;
+	scanf("%s %d", cmd, &key);																				// the first command must be Push
+	Node *root = new Node(key);
 	stack.push(root);
-	for (int i = 1; i < (num_node << 1); i++) {
-		cin >> cmd;
-		if (cmd == "Pop") {
-			cur = stack.top();
+	Node *cur_node = root;
+	for (int i = 1; i < num_node * 2; i++) {
+		scanf("%s", cmd);
+		if (cmd[1] == 'o') {																				// Pop
+			cur_node = stack.top();
 			stack.pop();
 		}
-		else {
-			cin >> value;
-			Node *node = new Node(value);
-			if (cur->left == NULL)
-				cur->left = node;
+		else {																								// Push
+			scanf("%d", &key);
+			Node *node = new Node(key);
+			if (cur_node->left == NULL)
+				cur_node->left = node;
 			else
-				cur->right = node;
+				cur_node->right = node;
 			stack.push(node);
-			cur = node;
+			cur_node = node;
 		}
 	}
-	postorder(root, true);
+
+	stack.push(root);
+	while (!stack.empty()) {
+		while (true) {
+			cur_node = stack.top();
+			if (cur_node->right != NULL)
+				stack.push(cur_node->right);
+			if (cur_node->left != NULL)
+				stack.push(cur_node->left);
+			if (cur_node == stack.top())																	// leaf node
+				break;
+		}
+		printf("%d", cur_node->key);
+		stack.pop();
+		while ((!stack.empty()) && ((stack.top()->left == cur_node) || (stack.top()->right == cur_node))) {	// children of the currently top node are already visited
+			cur_node = stack.top();
+			printf(" %d", cur_node->key);
+			stack.pop();
+		}
+		if (!stack.empty())
+			printf(" ");
+	}
 
 	return 0;
 }

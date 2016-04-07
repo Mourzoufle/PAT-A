@@ -1,76 +1,55 @@
-#include <iostream>
+#include <cstdio>
 #include <algorithm>
 
 using namespace std;
 
 int main() {
-	int num;
-	cin >> num;
-	int *ori = new int[num];
-	for (int i = 0; i < num; i++)
-		cin >> ori[i];
-	int *sorted = new int[num];
-	for (int i = 0; i < num; i++)
-		cin >> sorted[i];
-	int idx;
-	for (idx = 1; idx < num; idx++)
-		if (sorted[idx] < sorted[idx - 1])
-			break;
-	bool is_insert = true;
-	for (int i = idx; i < num; i++) {
-		if (ori[i] != sorted[i]) {
-			is_insert = false;
+	int num_element;						// number of elements in the sequence
+	scanf("%d", &num_element);
+	int *initial = new int[num_element];	// the initial sequence
+	for (int i = 0; i < num_element; i++)
+		scanf("%d", &initial[i]);
+	int *sorted = new int[num_element];		// the partially sorted sequence
+	for (int i = 0; i < num_element; i++)
+		scanf("%d", &sorted[i]);
+
+	int idx = 1;							// index of the first unsorted element
+	while (sorted[idx] >= sorted[idx - 1])
+		idx++;
+	bool is_insertion = true;				// flag indicating if the method is insertion sort
+	for (int i = idx; i < num_element; i++) {
+		if (initial[i] != sorted[i]) {
+			is_insertion = false;
 			break;
 		}
 	}
 
-	if (is_insert) {
-		cout << "Insertion Sort" << endl;
-		for (int i = 0; i < idx; i++) {
-			if (i > 0)
-				cout << " ";
-			if (sorted[i] < sorted[idx])
-				cout << sorted[i];
-			else {
-				cout << sorted[idx];
-				while (i < idx)
-					cout << " " << sorted[i++];
-			}
-		}
-		for (int i = idx + 1; i < num; i++)
-			cout << " " << sorted[i];
+	if (is_insertion) {
+		printf("Insertion Sort\n");
+		sort(sorted, sorted + idx + 1);		// sort the first idx + 1 elements
 	}
 	else {
-		cout << "Merge Sort" << endl;
-		int length;
-		for (length = 4; (length >> 1) < num; length <<= 1) {
-			bool complete = true;
-			for (idx = 0; idx + length < num; idx += length) {
-				for (int i = idx + 1; i < idx + length; i++) {
-					if (sorted[i] < sorted[i - 1]) {
-						complete = false;
-						break;
-					}
-				}
-				if (!complete)
-					break;
-			}
-			for (int i = idx + 1; i < num; i++) {
+		printf("Merge Sort\n");
+		int cur_size = 2;					// current size of merge sort - the number of finished iteration >= 1
+		while (cur_size < num_element / 2) {
+			bool finish = true;				// flag indicating the next iteration is finished
+			for (int i = cur_size; i < num_element; i += cur_size * 2) {
 				if (sorted[i] < sorted[i - 1]) {
-					complete = false;
+					finish = false;
 					break;
 				}
 			}
-			if (!complete)
+			if (!finish)
 				break;
+			cur_size *= 2;
 		}
-		for (idx = 0; idx + length < num; idx += length)
-			sort(sorted + idx, sorted + idx + length);
-		sort(sorted + idx, sorted + num);
-		cout << sorted[0];
-		for (int i = 1; i < num; i++)
-			cout << " " << sorted[i];
+		cur_size *= 2;
+		for (int i = 0; i < num_element; i += cur_size)
+			sort(sorted + i, sorted + min(i + cur_size, num_element));
 	}
+	printf("%d", sorted[0]);
+	for (int i = 1; i < num_element; i++)
+		printf(" %d", sorted[i]);
 
 	return 0;
 }

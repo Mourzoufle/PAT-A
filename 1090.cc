@@ -1,47 +1,38 @@
 #include <cstdio>
 #include <vector>
 #include <queue>
-#include <cmath>
 
 using namespace std;
 
 int main() {
 	int num_node;
-	double base, ratio;
-	scanf("%d %lf %lf", &num_node, &base, &ratio);
-	vector<int> *nodes = new vector<int>[num_node];
-	queue<int> indices;
-	queue<int> depths;
+	double base_price, ratio;						// base price; percentage rate of price increment for each distributor or retailer
+	scanf("%d %lf %lf", &num_node, &base_price, &ratio);
+	vector<int> *nodes = new vector<int>[num_node];	// children of each node
+	queue<int> queue;								// BFS - level order traversal of the whole supply chain
 	for (int i = 0; i < num_node; i++) {
-		int upper;
-		scanf("%d", &upper);
-		if (upper < 0) {
-			indices.push(i);
-			depths.push(0);
-		}
+		int parent;
+		scanf("%d", &parent);
+		if (parent < 0)								// the root
+			queue.push(i);
 		else
-			nodes[upper].push_back(i);
+			nodes[parent].push_back(i);
 	}
 
-	int max = -1, num_sell = 0;
-	while (!indices.empty()) {
-		int idx = indices.front();
-		int depth = depths.front();
-		indices.pop();
-		depths.pop();
-		for (int i = 0; i < nodes[idx].size(); i++) {
-			indices.push(nodes[idx][i]);
-			depths.push(depth + 1);
+	double price = base_price;						// the highest price; 
+	int num_sell;									// number of retailers that sell at the highest price
+	while (!queue.empty()) {
+		num_sell = queue.size();
+		for (int i = 0; i < num_sell; i++) {
+			int node = queue.front();
+			for (int j = 0; j < nodes[node].size(); j++)
+				queue.push(nodes[node][j]);
+			queue.pop();
 		}
-		if (max < depth) {
-			max = depth;
-			num_sell = 1;
-		}
-		else if (max == depth)
-			num_sell++;
-		if (indices.empty())
-			printf("%.2f %d", base * pow(1 + ratio / 100, max), num_sell);
+		if (!queue.empty())
+			price *= 1 + ratio / 100;
 	}
+	printf("%.2lf %d", price, num_sell);
 
 	return 0;
 }

@@ -1,53 +1,51 @@
 #include <cstdio>
-#include <stack>
+#include <vector>
 
 using namespace std;
 
-struct Pos {
+struct Position {		// position of a pixel in the image
 	int x;
 	int y;
 	int z;
 
-	Pos(int x, int y, int z): x(x), y(y), z(z) {}; 
+	Position(int x, int y, int z): x(x), y(y), z(z) {};
 };
 
-int DFS(int ***image, int z, int x, int y, int size_z, int size_x, int size_y) {
-	stack<Pos *> poses;
-	int sum = 0;
-	poses.push(new Pos(x, y, z));
-	image[z][x][y] = 0;
-	while (!poses.empty()) {
-		sum++;
-		Pos *pos = poses.top();
-		poses.pop();
-		if ((pos->z + 1 < size_z) && image[pos->z + 1][pos->x][pos->y] > 0) {
-			image[pos->z + 1][pos->x][pos->y] = 0;
-			poses.push(new Pos(pos->x, pos->y, pos->z + 1));
+/* BFS - get the volume of cores connected to the given one */
+int get_vol(int ***image, int z, int x, int y, int size_z, int size_x, int size_y) {
+	vector<Position *> positions;
+	positions.push_back(new Position(x, y, z));
+	image[z][x][y] = 0;	// this pixel will no longer be counted
+	for (int i = 0; i < positions.size(); i++) {
+		int x = positions[i]->x, y = positions[i]->y, z = positions[i]->z;
+		if ((x > 0) && (image[z][x - 1][y] > 0)) {
+			positions.push_back(new Position(x - 1, y, z));
+			image[z][x - 1][y] = 0;
 		}
-		if ((pos->z > 0) && image[pos->z - 1][pos->x][pos->y] > 0) {
-			image[pos->z - 1][pos->x][pos->y] = 0;
-			poses.push(new Pos(pos->x, pos->y, pos->z - 1));
+		if ((x < size_x - 1) && (image[z][x + 1][y] > 0)) {
+			positions.push_back(new Position(x + 1, y, z));
+			image[z][x + 1][y] = 0;
 		}
-		if ((pos->x + 1 < size_x) && image[pos->z][pos->x + 1][pos->y] > 0) {
-			image[pos->z][pos->x + 1][pos->y] = 0;
-			poses.push(new Pos(pos->x + 1, pos->y, pos->z));
+		if ((y > 0) && (image[z][x][y - 1] > 0)) {
+			positions.push_back(new Position(x, y - 1, z));
+			image[z][x][y - 1] = 0;
 		}
-		if ((pos->x > 0) && image[pos->z][pos->x - 1][pos->y] > 0) {
-			image[pos->z][pos->x - 1][pos->y] = 0;
-			poses.push(new Pos(pos->x - 1, pos->y, pos->z));
+		if ((y < size_y - 1) && (image[z][x][y + 1] > 0)) {
+			positions.push_back(new Position(x, y + 1, z));
+			image[z][x][y + 1] = 0;
 		}
-		if ((pos->y + 1 < size_y) && image[pos->z][pos->x][pos->y + 1] > 0) {
-			image[pos->z][pos->x][pos->y + 1] = 0;
-			poses.push(new Pos(pos->x, pos->y + 1, pos->z));
+		if ((z > 0) && (image[z - 1][x][y] > 0)) {
+			positions.push_back(new Position(x, y, z - 1));
+			image[z - 1][x][y] = 0;
 		}
-		if ((pos->y > 0) && image[pos->z][pos->x][pos->y - 1] > 0) {
-			image[pos->z][pos->x][pos->y - 1] = 0;
-			poses.push(new Pos(pos->x, pos->y - 1, pos->z));
+		if ((z < size_z - 1) && (image[z + 1][x][y] > 0)) {
+			positions.push_back(new Position(x, y, z + 1));
+			image[z + 1][x][y] = 0;
 		}
-		delete[] pos;
+		delete positions[i];
 	}
 
-	return sum;
+	return positions.size();
 }
 
 int main() {
@@ -63,19 +61,19 @@ int main() {
 		}
 	}
 
-	int sum = 0;
+	int total_vol = 0;	// total volume
 	for (int i = 0; i < size_z; i++) {
 		for (int j = 0; j < size_x; j++) {
 			for (int k = 0; k < size_y; k++) {
 				if (image[i][j][k] == 0)
 					continue;
-				int cur = DFS(image, i, j, k, size_z, size_x, size_y);
-				if (cur >= threshold)
-					sum += cur;
+				int vol = get_vol(image, i, j, k, size_z, size_x, size_y);
+				if (vol >= threshold)
+					total_vol += vol;
 			}
 		}
 	}
-	printf("%d", sum);
+	printf("%d", total_vol);
 
 	return 0;
 }

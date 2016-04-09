@@ -1,27 +1,29 @@
-#include <iostream>
-
-using namespace std;
+#include <cstdio>
+#include <cstring>
 
 int main() {
-	string sell, buy;
-	cin >> sell >> buy;
-	int sells[256], buys[256];
-	for (int i = 0; i < 256; i++) {
-		sells[i] = 0;
-		buys[i] = 0;
+	char *strs[2];							// strings of beads that is provided and required
+	for (int i = 0; i < 2; i++) {
+		strs[i] = new char[1024];
+		scanf("%s", strs[i]);
 	}
-	for (int i = 0; i < sell.size(); i++)
-		sells[sell[i]]++;
-	for (int i = 0; i < buy.size(); i++)
-		buys[buy[i]]++;
-	int diff = 0;
+
+	int *counts[2];							// numbers of the beads in each color in the provided and required strings
+	for (int i = 0; i < 2; i++) {
+		counts[i] = new int[256];
+		for (int j = 0; j < 256; j++)
+			counts[i][j] = 0;
+		for (int j = 0; strs[i][j] != '\0'; j++)
+			counts[i][strs[i][j]]++;
+	}
+	int num_miss = 0;						// number of missing beads
 	for (int i = 0; i < 256; i++)
-		if (sells[i] < buys[i])
-			diff += buys[i] - sells[i];
-	if (diff == 0)
-		cout << "Yes " << sell.size() - buy.size();
+		if (counts[0][i] < counts[1][i])	// number of beads in this color is not enough
+			num_miss += counts[1][i] - counts[0][i];
+	if (num_miss == 0)						// no missing beads
+		printf("Yes %d", strlen(strs[0]) - strlen(strs[1]));
 	else
-		cout << "No " << diff;
+		printf("No %d", num_miss);
 
 	return 0;
 }

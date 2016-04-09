@@ -1,93 +1,88 @@
-#include <iostream>
+#include <cstdio>
+#include <string>
 #include <vector>
 #include <map>
 #include <algorithm>
-#include <cstdio>
 
 using namespace std;
 
 struct Record {
-	string id;
+	string plate;										// plate number
 	int time;
 	bool is_in;
 };
 
-int str_to_time(string str) {
-	for (int i = 0; i < str.size(); i++)
-		str[i] -= '0';
-
-	return str[0] * 36000 + str[1] * 3600 + str[3] * 600 + str[4] * 60 + str[6] * 10 + str[7];
-}
-
-bool compare(const Record &a, const Record &b) { return a.time < b.time; } 
+/* compare fuction for sorting records - according to their time */
+bool cmp(const Record &a, const Record &b) { return a.time < b.time; } 
 
 int main() {
 	int num_record, num_query;
-	cin >> num_record >> num_query;
+	scanf("%d %d", &num_record, &num_query);
 	Record *records = new Record[num_record];
-	map<string, int> indices;
-	vector<string> ids;
 	for (int i = 0; i < num_record; i++) {
-		string id, time, status;
-		cin >> id >> time >> status;
-		if (indices.find(id) == indices.end()) {
-			indices[id] = indices.size() - 1;
-			ids.push_back(id);
-		}
-		records[i].id = id;
-		records[i].time = str_to_time(time);
-		records[i].is_in = status == "in";
+		char plate[16], status[4];
+		int hour, minute, second;
+		scanf("%s %d:%d:%d %s", plate, &hour, &minute, &second, status);
+		records[i].plate = plate;
+		records[i].time = hour * 3600 + minute * 60 + second;
+		records[i].is_in = status[0] == 'i';			// "in"
 	}
-	sort(records, records + num_record, compare);
+	sort(records, records + num_record, cmp);
 
-	int *ins = new int[indices.size()];
-	int *sums = new int[indices.size()];
-	for (int i = 0; i < indices.size(); i++) {
-		ins[i] = -1;
-		sums[i] = 0;
-	}
-	vector<Record *> vector;
+	map<string, int> str_to_idx;						// index of each plate number in the records
+	vector<string> plates;
+	vector<int> indices_in;								// index of the last record whose status is in of each plates
+	vector<int> periods;								// period of parking time of each car
+	vector<Record *> records_valid;						// the valid records
 	for (int i = 0; i < num_record; i++) {
-		int idx = indices[records[i].id];
-		if (records[i].is_in)
-			ins[idx] = i;
-		else if (ins[idx] >= 0) {
-			vector.push_back(records + ins[idx]);
-			vector.push_back(records + i);
-			sums[idx] += records[i].time - records[ins[idx]].time;
-			ins[idx] = -1;
+		string plate = records[i].plate;
+		if (str_to_idx.find(plate) == str_to_idx.end()) {
+			str_to_idx[plate] = str_to_idx.size() - 1;
+			plates.push_back(plate);
+			indices_in.push_back(records[i].is_in ? i : -1);
+			periods.push_back(0);
+		}
+		int idx = str_to_idx[plate];
+		if (records[i].is_in)							// got a record whose status is in
+			indices_in[idx] = i;
+		else if (indices_in[idx] >= 0) {				// or the record is valid if there is already a record whose status is in
+			records_valid.push_back(records + indices_in[idx]);
+			records_valid.push_back(records + i);
+			periods[idx] += records[i].time - records[indices_in[idx]].time;
+			indices_in[idx] = -1;
 		}
 	}
-	sort(vector.begin(), vector.end());
+	sort(records_valid.begin(), records_valid.end());	// the original records are already sorted, only need to sort the valid ones according to their address
 
-	int *nums = new int[86400];
-	int num = 0, time = 0;
-	for (int i = 0; i < vector.size(); i++) {
-		while (time < vector[i]->time)
-			nums[time++] = num;
-		num += vector[i]->is_in ? 1 : -1;
-		nums[time] = num;
-	}
-	for (int i = vector.back()->time + 1; i < 86400; i++)
-		nums[i] = num;
-
+	int num_park = 0, head = 0;							// number of parked cars; the first record that is not counted in calculating the number of parked cars
 	for (int i = 0; i < num_query; i++) {
-		string id;
-		cin >> id;
-		cout << nums[str_to_time(id)] << endl;
-	}
-	string maxs;
-	int max = -1;
-	for (int i = 0; i < indices.size(); i++) {
-		if (sums[i] > max) {
-			max = sums[i];
-			maxs = ids[i] + " ";
+		int hour, minute, second;
+		scanf("%d:%d:%d", &hour, &minute, &second);
+		int time = hour * 3600 + minute * 60 + second;
+		while (head < records_valid.size()) {
+			if (records_valid[head]->time > time)		// record out of the range of time
+				break;
+			else
+				num_park += records_valid[head++]->is_in ? 1 : -1;
 		}
-		else if (sums[i] == max)
-			maxs += ids[i] + " ";
+		printf("%d\n", num_park);
 	}
-	cout << maxs;
-	printf("%02d:%02d:%02d", max / 3600, (max % 3600) / 60, max % 60);
+
+	vector<string> plates_max;							// cars that have parked for the longest time period
+	int period = 0;
+	for (int i = 0; i < periods.size(); i++) {
+		if (periods[i] > period) {
+			period = periods[i];
+			plates_max.clear();
+			plates_max.push_back(plates[i]);
+		}
+		else if (periods[i] == period)
+			plates_max.push_back(plates[i]);
+	}
+	sort(plates_max.begin(), plates_max.end());
+	for (int i = 0; i < plates_max.size(); i++)
+		printf("%s ", plates_max[i].c_str());
+	printf("%02d:%02d:%02d", period / 3600, (period % 3600) / 60, period % 60);
 
 	return 0;
 }

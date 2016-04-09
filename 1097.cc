@@ -4,47 +4,46 @@
 
 using namespace std;
 
+const int MAX_NODE = 100000;
+
 struct Node {
-	int addr;
-	int key;
+	int value;
 	int next;
+
+	Node(): next(-1) {};
 };
 
 int main() {
-	Node *nodes = new Node[100000];
-	int head, num_node;
+	Node *nodes = new Node[MAX_NODE];
+	int num_node, head;
 	scanf("%d %d", &head, &num_node);
 	for (int i = 0; i < num_node; i++) {
-		int addr;
-		scanf("%d", &addr);
-		scanf("%d %d", &nodes[addr].key, &nodes[addr].next);
-		nodes[addr].addr = addr;
-	}
-	vector<Node *> res_nodes, del_nodes;
-	set<int> keys;
-	for (int i = head; i >= 0; i = nodes[i].next) {
-		int key = nodes[i].key;
-		if (key < 0)
-			key = -key;
-		if (keys.find(key) == keys.end()) {
-			res_nodes.push_back(nodes + i);
-			keys.insert(key);
-		}
-		else
-			del_nodes.push_back(nodes + i);
+		int cur_node;								// address of the current node
+		scanf("%d", &cur_node);
+		scanf("%d %d", &nodes[cur_node].value, &nodes[cur_node].next);
 	}
 
-	if (!res_nodes.empty()) {
-		printf("%05d %d ", res_nodes[0]->addr, res_nodes[0]->key);
-		for (int i = 1; i < res_nodes.size(); i++)
-			printf("%05d\n%05d %d ", res_nodes[i]->addr, res_nodes[i]->addr, res_nodes[i]->key);
-		printf("-1\n");
+	vector<Node *> nodes_valid[2];					// the nodes that belong to the list beginning with head and are reserved or remained
+	set<int> values;
+	while (head >= 0) {
+		int value = nodes[head].value;
+		if (value < 0)
+			value = -value;
+		if (values.find(value) == values.end()) {	// value has not been found before - this node is reserved
+			nodes_valid[0].push_back(nodes + head);
+			values.insert(value);
+		}
+		else										// or this node is removed
+			nodes_valid[1].push_back(nodes + head);
+		head = nodes[head].next;
 	}
-	if (!del_nodes.empty()) {
-		printf("%05d %d ", del_nodes[0]->addr, del_nodes[0]->key);
-		for (int i = 1; i < del_nodes.size(); i++)
-			printf("%05d\n%05d %d ", del_nodes[i]->addr, del_nodes[i]->addr, del_nodes[i]->key);
-		printf("-1\n");
+	for (int i = 0; i < 2; i++) {
+		if (!nodes_valid[i].empty()) {
+			printf("%05d %d ", nodes_valid[i].front() - nodes, nodes_valid[i].front()->value);
+			for (int j = 1; j < nodes_valid[i].size(); j++)
+				printf("%05d\n%05d %d ", nodes_valid[i][j] - nodes, nodes_valid[i][j] - nodes, nodes_valid[i][j]->value);
+			printf("-1\n");
+		}
 	}
 
 	return 0;

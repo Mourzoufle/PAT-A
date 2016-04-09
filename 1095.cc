@@ -69,20 +69,20 @@ int main() {
 	}
 
 	vector<string> plates_max;							// cars that have parked for the longest time period
-	int period = 0;
+	int max_period = 0;
 	for (int i = 0; i < periods.size(); i++) {
-		if (periods[i] > period) {
-			period = periods[i];
+		if (periods[i] > max_period) {
+			max_period = periods[i];
 			plates_max.clear();
 			plates_max.push_back(plates[i]);
 		}
-		else if (periods[i] == period)
+		else if (periods[i] == max_period)
 			plates_max.push_back(plates[i]);
 	}
 	sort(plates_max.begin(), plates_max.end());
 	for (int i = 0; i < plates_max.size(); i++)
 		printf("%s ", plates_max[i].c_str());
-	printf("%02d:%02d:%02d", period / 3600, (period % 3600) / 60, period % 60);
+	printf("%02d:%02d:%02d", max_period / 3600, (max_period % 3600) / 60, max_period % 60);
 
 	return 0;
 }

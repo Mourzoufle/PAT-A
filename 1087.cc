@@ -89,17 +89,17 @@ int main() {
 	int *costs = dijstra(routes, num_city, indices[str_to_num("ROM")]);
 	vector<vector<int>*> paths;
 	get_paths(routes, costs, num_city, 0, paths, NULL);
-	int happiness = INT_MIN, idx_path;
+	int max_happiness = INT_MIN, idx_path;
 	for (int i = 0; i < paths.size(); i++) {
 		int cur_happiness = 0;
 		for (int j = 1; j < paths[i]->size(); j++)
 			cur_happiness += happinesses[(*paths[i])[j]];
-		if ((cur_happiness > happiness) || ((cur_happiness == happiness) && (paths[i]->size() < paths[idx_path]->size()))) {
+		if ((cur_happiness > max_happiness) || ((cur_happiness == max_happiness) && (paths[i]->size() < paths[idx_path]->size()))) {
 			idx_path = i;
-			happiness = cur_happiness;
+			max_happiness = cur_happiness;
 		}
 	}
-	printf("%d %d %d %d\n%s", paths.size(), costs[0], happiness, happiness / (paths[idx_path]->size() - 1), cities[0]);
+	printf("%d %d %d %d\n%s", paths.size(), costs[0], max_happiness, max_happiness / (paths[idx_path]->size() - 1), cities[0]);
 	for (int i = 1; i < paths[idx_path]->size(); i++)
 		printf("->%s", cities[(*paths[idx_path])[i]]);
 

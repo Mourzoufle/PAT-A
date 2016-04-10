@@ -1,37 +1,38 @@
-#include <iostream>
+#include <cstdio>
 #include <vector>
 
 using namespace std;
 
 int main() {
-	int num;
-	cin >> num;
-	int *nums = new int[num];
-	for (int i = 0; i < num; i++)
-		cin >> nums[i];
-	vector<int> valids;
-	int max = nums[0];
-	valids.push_back(max);
-	for (int i = 1; i < num; i++) {
-		if (nums[i] < max)
-			while (!valids.empty()) {
-				if (nums[i] < valids.back())
-					valids.pop_back();
+	int num_num;				// number of numbers
+	scanf("%d", &num_num);
+	int *nums = new int[num_num];
+	for (int i = 0; i < num_num; i++)
+		scanf("%d", &nums[i]);
+
+	vector<int> pivots;			// candidates of the pivot - already in increasing order
+	pivots.push_back(nums[0]);
+	int max_num = nums[0];		// max number that have ever encountered
+	for (int i = 1; i < num_num; i++) {
+		if (nums[i] < max_num)	// check if the candidates are valid
+			while (!pivots.empty()) {
+				if (nums[i] < pivots.back())
+					pivots.pop_back();
 				else
 					break;
 			}
-		else {
-			max = nums[i];
-			valids.push_back(max);
+		else {					// new max number found - also can be a candidate
+			pivots.push_back(nums[i]);
+			max_num = nums[i];
 		}
 	}
-	cout << valids.size() << endl;
-	if (!valids.empty()) {
-		cout << valids[0];
-		for (int i = 1; i < valids.size(); i++)
-			cout << " " << valids[i];
+	printf("%d\n", pivots.size());
+	if (!pivots.empty()) {
+		printf("%d", pivots[0]);
+		for (int i = 1; i < pivots.size(); i++)
+			printf(" %d", pivots[i]);
 	}
-	cout << endl;
+	printf("\n");
 
 	return 0;
 }

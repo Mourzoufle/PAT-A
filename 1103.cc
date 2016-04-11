@@ -1,67 +1,52 @@
-#include <iostream>
+#include <cstdio>
 #include <cmath>
 
-using namespace std;
-
-void replace(int *best, int *cur, int num_item) {
+/* compare function to check if array a is less than b - according to the sums of the elemenets in them */
+bool cmp(int *a, int *b, int size) {
 	int sum = 0;
-	for (int i = 0; i < num_item; i++)
-		sum += best[i] - cur[i];
-	if (sum < 0)
-		for (int i = 0; i < num_item; i++)
-			best[i] = cur[i];
+	for (int i = 0; i < size; i++)
+		sum += a[i] - b[i];
+
+	return sum < 0;
 }
 
 int main() {
-	int sum, num_item, expon;
-	cin >> sum >> num_item >> expon;
-	int limit = sqrt(sum + 1 - num_item);
-	if (expon > 3)
-		limit = sqrt(limit);
-	int *expons = new int[limit + 1];
-	for (int i = 0; i <= limit; i++)
+	int sum, num_num, expon;																						// target sum; number of numbers; the exponent
+	scanf("%d %d %d", &sum, &num_num, &expon);
+
+	int max_num = pow(sum + 1 - num_num, 1.0 / expon);																// max number that is possible for factorization
+	int *expons = new int[max_num + 1];
+	for (int i = 0; i <= max_num; i++)
 		expons[i] = pow(i, expon) + 0.5;
 
-	int *best = new int[num_item];
-	int *cur = new int[num_item];
-	for (int i = 0; i < num_item;i++) {
-		best[i] = 0;
-		cur[i] = limit;
+	int *best_sln = new int[num_num];																				// the best solution
+	int *cur_sln = new int[num_num];																				// current solution
+	for (int i = 0; i < num_num; i++) {
+		best_sln[i] = 0;
+		cur_sln[i] = max_num;
 	}
-	int idx = 0, cur_sum = 0;
+	int idx = 0, cur_sum = 0;																						// index of current number under checking; current sum
 	while (idx >= 0) {
-		if (cur[idx] == 0) {
-			if (idx == 0)
-				break;
-			cur_sum -= expons[cur[--idx]--];
-			continue;
+		while ((cur_sum + expons[cur_sln[idx]] > sum) || ((cur_sum + expons[cur_sln[idx]] == sum) && (idx < num_num - 1)))
+			cur_sln[idx]--;
+		if ((cur_sln[idx] == 0) || (idx == num_num - 1)) {
+			if ((idx == num_num - 1) && (cur_sum + expons[cur_sln[idx]] == sum) && cmp(best_sln, cur_sln, num_num))	// better solution found
+				for (int i = 0; i < num_num; i++)
+					best_sln[i] = cur_sln[i];
+			if (--idx >= 0)
+				cur_sum -= expons[cur_sln[idx]--];
 		}
-		cur_sum += expons[cur[idx]];
-		if (cur_sum < sum) {
-			if (idx < num_item - 1) {
-				idx++;
-				cur[idx] = cur[idx - 1];
-			}
-			else {
-				cur_sum -= expons[cur[idx]] + expons[cur[idx - 1]];
-				cur[--idx]--;
-			}
+		else {
+			cur_sln[idx + 1] = cur_sln[idx];
+			cur_sum += expons[cur_sln[idx++]];
 		}
-		else if ((cur_sum == sum) && (idx == num_item - 1)) {
-			replace(best, cur, num_item);
-			cur_sum -= expons[cur[idx]] + expons[cur[idx - 1]];
-			cur[--idx]--;
-		}
-		else
-			cur_sum -= expons[cur[idx]--];
 	}
-
-	if (best[0] == 0)
-		cout << "Impossible";
+	if (best_sln[0] == 0)																							// no solution found
+		printf("Impossible");
 	else {
-		cout << sum << " = " << best[0] << "^" << expon;
-		for (int i = 1; i < num_item; i++)
-			cout << " + " << best[i] << "^" << expon;
+		printf("%d = %d^%d", sum, best_sln[0], expon);
+		for (int i = 1; i < num_num; i++)
+			printf(" + %d^%d", best_sln[i], expon);
 	}
 
 	return 0;

@@ -11,7 +11,7 @@ int main() {
 		scanf("%d", &coins[i]);
 	sort(coins, coins + num_coin);
 
-	int *max_prices = new int [price + 1];					// Knapsack problem - Dynamic Programming with a table of final states
+	int *max_prices = new int[price + 1];					// Knapsack problem - Dynamic Programming with a table of final states
 	for (int i = 0; i <= price; i++)
 		max_prices[i] = 0;
 	bool **select = new bool *[num_coin];					// flag that whether each coin is selected to pay different price

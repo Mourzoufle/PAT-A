@@ -28,14 +28,8 @@ int main() {
 			nodes[right[0] - '0'].is_root = false;
 		}
 	}
-
-	int root;
-	for (int i = 0; i < num_node; i++) {
-		if (nodes[i].is_root) {
-			root = i;
-			break;
-		}
-	}
+	int root = -1;
+	while (!nodes[++root].is_root);
 
 	queue<int> queue;												// level-order traversal
 	queue.push(root);

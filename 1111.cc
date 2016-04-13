@@ -4,24 +4,26 @@
 
 using namespace std;
 
-int *dijstra(int **roads, int num_node, int dst) {
+/* Dijstra - find the shortest distances of every node to the destination */
+int* dijstra(int **roads, int num_node, int dst) {
 	int *distances = new int[num_node];
 	bool *visit = new bool[num_node];
 	for (int i = 0; i < num_node; i++) {
-		distances[i] = roads[i][dst];
-		visit[i] = false;
+		distances[i] = roads[i][dst];											// initial distance of each node - the direct connection to the destination
+		visit[i] = false;														// every node is unvisited
 	}
-	visit[dst] = true;
-	for (int i = 1; i < num_node; i++) {
-		int cur_node = -1;
+	visit[dst] = true;															// ...except for the destination
+
+	for (int i = 1; i < num_node; i++) {										// the destination is already visited
+		int cur_node = -1;														// current node that is unvisited & has the shortest distance
 		for (int j = 0; j < num_node; j++)
 			if (!visit[j] && ((cur_node < 0) || (distances[j] < distances[cur_node])))
 				cur_node = j;
-		if (distances[cur_node] == INT_MAX)
+		if (distances[cur_node] == INT_MAX)										// all unvisited nodes are not connected to the destination - exit
 			break;
 		visit[cur_node] = true;
 		for (int j = 0; j < num_node; j++)
-			if (roads[j][cur_node] < distances[j] - distances[cur_node])
+			if (roads[j][cur_node] < distances[j] - distances[cur_node])		// this node has a shorter distance via the current node
 				distances[j] = roads[j][cur_node] + distances[cur_node];
 	}
 	delete[] visit;
@@ -29,23 +31,25 @@ int *dijstra(int **roads, int num_node, int dst) {
 	return distances;
 }
 
-void get_paths(int **roads, int *distances, int num_node, int src, vector<int> *path, vector<vector<int> *> &paths) {
+/* DFS - find the shortest paths */
+void get_paths(int **roads, int *distances, int num_node, int src, vector<vector<int>*> &paths, vector<int> *path) {
 	if (path == NULL)
 		path = new vector<int>;
 	path->push_back(src);
-	if (distances[src] == 0) {
+	if (distances[src] == 0) {													// got the destination already
 		paths.push_back(path);
 		return;
 	}
 	for (int i = 0; i < num_node; i++) {
-		if ((i != src) && (roads[src][i] == distances[src] - distances[i])) {
+		if ((i != src) && (roads[src][i] == distances[src] - distances[i])) {	// find the next node along the path
 			vector<int> *cur_path = new vector<int>(*path);
-			get_paths(roads, distances, num_node, i, cur_path, paths);
+			get_paths(roads, distances, num_node, i, paths, cur_path);
 		}
 	}
 	delete path;
 }
 
+/* check if vector a and b are equal */
 bool equal(vector<int> *a, vector<int> *b) {
 	if (a->size() != b->size())
 		return false;
@@ -75,7 +79,7 @@ int main() {
 		scanf("%d %d %d %d %d", &a, &b, &is_directed, &length, &time);
 		lengths[a][b] = length;
 		times[a][b] = time;
-		if (is_directed == 0) {
+		if (is_directed == 0) {													// not an one-way road
 			lengths[b][a] = length;
 			times[b][a] = time;
 		}
@@ -84,8 +88,8 @@ int main() {
 
 	int *distances_length = dijstra(lengths, num_node, dst), *distances_time = dijstra(times, num_node, dst);
 	vector<vector<int> *> paths_length, paths_time;
-	get_paths(lengths, distances_length, num_node, src, NULL, paths_length);
-	get_paths(times, distances_time, num_node, src, NULL, paths_time);
+	get_paths(lengths, distances_length, num_node, src, paths_length, NULL);
+	get_paths(times, distances_time, num_node, src, paths_time, NULL);
 	int idx_length, idx_time, min_time = INT_MAX, min_size = INT_MAX;
 	for (int i = 0; i < paths_length.size(); i++) {
 		int cur_time = 0;
@@ -102,7 +106,7 @@ int main() {
 			idx_time = i;
 		}
 	}
-	if (equal(paths_length[idx_length], paths_time[idx_time])) {
+	if (equal(paths_length[idx_length], paths_time[idx_time])) {				// only one path that is the shortest and the fastest
 		printf("Distance = %d; Time = %d: %d", distances_length[src], distances_time[src], src);
 		for (int j = 1; j < paths_length[idx_length]->size(); j++)
 			printf(" -> %d", (*paths_length[idx_length])[j]);

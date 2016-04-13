@@ -7,29 +7,31 @@ using namespace std;
 struct Node {
 	int left;
 	int right;
+	bool is_root;
+
+	Node(): left(-1), right(-1), is_root(true) {};
 };
 
 int main() {
 	int num_node;
 	scanf("%d", &num_node);
 	Node *nodes = new Node[num_node];
-	bool *is_root = new bool[num_node];								// flag indicating the root
-	for (int i = 0; i < num_node; i++)
-		is_root[i] = true;
 	for (int i = 0; i < num_node; i++) {
 		char left[4], right[4];
 		scanf("%s %s", &left, &right);
-		nodes[i].right = (left[0] == '-' ? -1 : left[0] - '0');		// swap the left and right children
-		nodes[i].left = (right[0] == '-' ? -1 : right[0] - '0');
-		if (nodes[i].left >= 0)
-			is_root[nodes[i].left] = false;
-		if (nodes[i].right >= 0)
-			is_root[nodes[i].right] = false;
+		if (left[0] != '-') {
+			nodes[i].right = left[0] - '0';							// swap the left and right children
+			nodes[left[0] - '0'].is_root = false;
+		}
+		if (right[0] != '-') {
+			nodes[i].left = right[0] - '0';
+			nodes[right[0] - '0'].is_root = false;
+		}
 	}
 
 	int root;
 	for (int i = 0; i < num_node; i++) {
-		if (is_root[i]) {
+		if (nodes[i].is_root) {
 			root = i;
 			break;
 		}

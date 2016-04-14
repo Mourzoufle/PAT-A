@@ -17,30 +17,30 @@ int main() {
 	Node *root = new Node(key);
 	for (int i = 1; i < num_node; i++) {
 		scanf("%d", &key);
-		Node *cur = root;
+		Node *cur_node = root;
 		while (true) {
-			if (key <= cur->key) {
-				if (cur->left == NULL) {
-					cur->left = new Node(key);
+			if (key <= cur_node->key) {
+				if (cur_node->left == NULL) {
+					cur_node->left = new Node(key);
 					break;
 				}
 				else
-					cur = cur->left;
+					cur_node = cur_node->left;
 			}
 			else {
-				if (cur->right == NULL) {
-					cur->right = new Node(key);
+				if (cur_node->right == NULL) {
+					cur_node->right = new Node(key);
 					break;
 				}
 				else
-					cur = cur->right;
+					cur_node = cur_node->right;
 			}
 		}
 	}
 
-	queue<Node *> queue;
+	queue<Node *> queue;	// level order traversal
 	queue.push(root);
-	int sizes[2] = {0, 0};
+	int sizes[2] = {0, 0};	// size of the last level; the second last level
 	while (!queue.empty()) {
 		sizes[1] = sizes[0];
 		sizes[0] = queue.size();
